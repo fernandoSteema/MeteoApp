@@ -47,6 +47,10 @@ namespace MeteoApp
             }
         }
 
+        /// <summary>
+        /// Retrieves the hourly weather evolution for the specified city and displays it in a bar chart.
+        /// </summary>
+        /// <param name="city">The name of the city to fetch the weather evolution for.</param>
         private async void GetAllTemperatures(string city)
         {
             Bar barSeries = (Bar)tChart1.Series[0];
@@ -126,6 +130,10 @@ namespace MeteoApp
             tChart1.Page.Next();
         }
 
+        /// <summary>
+        /// Retrieves the 10-day weather forecast for the specified city and displays it in a bar chart.
+        /// </summary>
+        /// <param name="city">The name of the city to fetch the weather forecast for.</param>
         private async void GetAllTemperaturesByDays(string city)
         {
             Bar barSeries;
@@ -292,73 +300,6 @@ namespace MeteoApp
 
         }
 
-        //private void tChart1_AfterDraw(object sender, Steema.TeeChart.Drawing.IGraphics3D g)
-        //{
-        //    foreach (Series s in tChart1.Series)
-        //    {
-        //        if (!(s is Bar)) continue;
-
-        //        int p = 0;
-
-        //        for (; p < s.Count; p++)
-        //        {
-        //            string dateKey;
-
-        //            // Case 1: Data represents hours (GetAllTemperatures)
-        //            if (horasConFechas.ContainsKey(s.XValues[p]))
-        //            {
-        //                dateKey = horasConFechas[s.XValues[p]];
-        //            }
-        //            // Case 2: Data represents days (GetAllTemperaturesByDays)
-        //            else if (diasConFechas.ContainsValue(s.Labels[p]))
-        //            {
-        //                dateKey = diasConFechas.FirstOrDefault(x => x.Value == s.Labels[p]).Key.ToString("yyyy-MM-dd");
-        //            }
-        //            else
-        //            {
-        //                continue;
-        //            }
-
-        //            // Check if the dictionary iconosPorDia contains the key dateKey and has at least one associated icon
-        //            if (!iconosPorDia.ContainsKey(dateKey) || iconosPorDia[dateKey].Count == 0)
-        //                continue;
-
-        //            Bitmap objBitmap;
-        //            if (s.Labels[p].Contains(":"))
-        //            {
-        //                int iconIndex = p % iconosPorDia[dateKey].Count; 
-        //                objBitmap = LoadBitmapFromUrl(iconosPorDia[dateKey][iconIndex]);
-        //            }
-        //            else
-        //            {
-        //                objBitmap = LoadBitmapFromUrl(iconosPorDia[dateKey][0]);
-        //            }
-        //            Steema.TeeChart.Drawing.TImage tChartImage = new Steema.TeeChart.Drawing.TImage(objBitmap);
-
-        //            // Gets the width and height of the icon image
-        //            int iconWidth = objBitmap.Width;
-        //            int iconHeight = objBitmap.Height;
-
-        //            // Calculates the X-position on the chart, centring the icon on the position of the series on the X-axis.
-        //            int xPos = (int)tChart1.Axes.Bottom.CalcPosValue(s.XValues[p]) - (iconWidth / 2);
-
-        //            // Calculates the Y-position on the chart, centring the icon on the position of the series on the Y-axis.
-        //            int yPos = (int)tChart1.Axes.Left.CalcPosValue(s.YValues[p]) - (iconHeight / 2);
-
-        //            // Draw the image at the calculated position within the chart
-        //            g.Draw(xPos, yPos, tChartImage);
-
-        //            string txt = $"{s.YValues[p]}ºC";
-        //            int textWidth = (int)(g.TextWidth(txt) / 2);
-        //            int textYPos = yPos + iconHeight + 5;
-        //            int textXPos = xPos + (iconWidth / 2) - textWidth;
-
-        //            g.TextOut(textXPos, textYPos, txt);
-        //        }
-        //        p = 0;
-        //    }
-        //}
-
         private void tChart1_AfterDraw(object sender, Steema.TeeChart.Drawing.IGraphics3D g)
         {
             foreach (Series s in tChart1.Series)
@@ -371,12 +312,12 @@ namespace MeteoApp
                 {
                     string dateKey;
 
-                    // 🔹 Case 1: Datos por horas
+                    // Case 1: Data represents hours (GetAllTemperatures)
                     if (horasConFechas.ContainsKey(s.XValues[i]))
                     {
                         dateKey = horasConFechas[s.XValues[i]];
                     }
-                    // 🔹 Case 2: Datos por días
+                    // Case 2: Data represents days (GetAllTemperaturesByDays)
                     else if (diasConFechas.ContainsValue(s.Labels[i]))
                     {
                         dateKey = diasConFechas.FirstOrDefault(x => x.Value == s.Labels[i]).Key.ToString("yyyy-MM-dd");
@@ -394,7 +335,7 @@ namespace MeteoApp
 
                 foreach (var grupo in datosAgrupados)
                 {
-                    int p = 0; // 🔹 Reiniciar p para cada día
+                    int p = 0;
                     string dateKey = grupo.Key;
 
                     if (!iconosPorDia.ContainsKey(dateKey) || iconosPorDia[dateKey].Count == 0)
@@ -415,7 +356,6 @@ namespace MeteoApp
 
                         Steema.TeeChart.Drawing.TImage tChartImage = new Steema.TeeChart.Drawing.TImage(objBitmap);
 
-                        // Posicionar la imagen
                         int iconWidth = objBitmap.Width;
                         int iconHeight = objBitmap.Height;
                         int xPos = (int)tChart1.Axes.Bottom.CalcPosValue(s.XValues[index]) - (iconWidth / 2);
@@ -423,7 +363,6 @@ namespace MeteoApp
 
                         g.Draw(xPos, yPos, tChartImage);
 
-                        // Dibujar el texto de la temperatura
                         string txt = $"{s.YValues[index]}ºC";
                         int textWidth = (int)(g.TextWidth(txt) / 2);
                         int textYPos = yPos + iconHeight + 5;
@@ -431,7 +370,7 @@ namespace MeteoApp
 
                         g.TextOut(textXPos, textYPos, txt);
 
-                        p++; // 🔹 Incrementar p solo dentro del grupo de horas del mismo día
+                        p++;
                     }
                 }
             }
