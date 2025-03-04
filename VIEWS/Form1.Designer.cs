@@ -45,6 +45,7 @@
             lblMinMax = new Label();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            hScrollBar1 = new HScrollBar();
             tChart1 = new Steema.TeeChart.TChart();
             bar1 = new Steema.TeeChart.Styles.Bar();
             tabPage2 = new TabPage();
@@ -53,7 +54,6 @@
             line1 = new Steema.TeeChart.Styles.Line();
             nearestPoint1 = new Steema.TeeChart.Tools.NearestPoint();
             nearestPoint2 = new Steema.TeeChart.Tools.NearestPoint();
-            tabPage3 = new TabPage();
             chartController1 = new Steema.TeeChart.ChartController();
             contextMenuStrip1 = new ContextMenuStrip(components);
             btnDays = new Button();
@@ -154,23 +154,31 @@
             // 
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
-            tabControl1.Controls.Add(tabPage3);
             tabControl1.Location = new Point(194, 302);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1157, 426);
+            tabControl1.Size = new Size(1157, 428);
             tabControl1.TabIndex = 11;
             // 
             // tabPage1
             // 
+            tabPage1.Controls.Add(hScrollBar1);
             tabPage1.Controls.Add(tChart1);
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(1149, 398);
+            tabPage1.Size = new Size(1149, 400);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "tabPage1";
             tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // hScrollBar1
+            // 
+            hScrollBar1.Location = new Point(-8, 385);
+            hScrollBar1.Name = "hScrollBar1";
+            hScrollBar1.Size = new Size(1157, 17);
+            hScrollBar1.TabIndex = 14;
+            hScrollBar1.Scroll += hScrollBar1_Scroll;
             // 
             // tChart1
             // 
@@ -1285,6 +1293,7 @@
             tChart1.Zoom.Brush.Color = Color.FromArgb(150, 173, 216, 230);
             tChart1.Zoom.Brush.Solid = true;
             tChart1.Zoom.Brush.Visible = true;
+            tChart1.Scroll += tChart1_Scroll;
             tChart1.AfterDraw += tChart1_AfterDraw;
             tChart1.ClickSeries += tChart1_ClickSeries;
             // 
@@ -1354,20 +1363,9 @@
             // 
             // 
             // 
-            bar1.Marks.Arrow.Visible = false;
-            bar1.Marks.ArrowLength = 8;
-            // 
-            // 
-            // 
-            bar1.Marks.Brush.Color = Color.FromArgb(119, 153, 214);
-            // 
-            // 
-            // 
-            bar1.Marks.Brush.Gradient.SigmaFocus = 0F;
-            bar1.Marks.Brush.Gradient.SigmaScale = 0F;
+            bar1.Marks.Brush.Color = Color.FromArgb(255, 255, 255);
             bar1.Marks.Brush.Solid = true;
-            bar1.Marks.Brush.Visible = false;
-            bar1.Marks.FollowSeriesColor = true;
+            bar1.Marks.Brush.Visible = true;
             // 
             // 
             // 
@@ -1375,7 +1373,7 @@
             // 
             // 
             // 
-            bar1.Marks.Font.Brush.Color = Color.FromArgb(255, 255, 255);
+            bar1.Marks.Font.Brush.Color = Color.Black;
             bar1.Marks.Font.Brush.Solid = true;
             bar1.Marks.Font.Brush.Visible = true;
             // 
@@ -1402,14 +1400,10 @@
             // 
             // 
             // 
-            bar1.Marks.Pen.Color = Color.FromArgb(119, 153, 214);
             // 
             // 
             // 
-            // 
-            // 
-            // 
-            bar1.Marks.Shadow.Brush.Color = Color.FromArgb(128, 128, 128);
+            bar1.Marks.Shadow.Brush.Color = Color.Gray;
             bar1.Marks.Shadow.Brush.Solid = true;
             bar1.Marks.Shadow.Brush.Visible = true;
             // 
@@ -1439,7 +1433,6 @@
             bar1.Marks.Symbol.Shadow.Brush.Color = Color.DarkGray;
             bar1.Marks.Symbol.Shadow.Brush.Solid = true;
             bar1.Marks.Symbol.Shadow.Brush.Visible = true;
-            bar1.Marks.Transparent = true;
             // 
             // 
             // 
@@ -1565,12 +1558,12 @@
             bar1.YValues.DataMember = "Bar";
             bar1.YValues.Value = new double[]
     {
-    1028D,
-    931D,
-    827D,
-    795D,
-    747D,
-    823D,
+    403D,
+    475D,
+    482D,
+    560D,
+    675D,
+    650D,
     0D,
     0D,
     0D,
@@ -1674,7 +1667,7 @@
             tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1149, 398);
+            tabPage2.Size = new Size(1149, 400);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "tabPage2";
             tabPage2.UseVisualStyleBackColor = true;
@@ -3042,31 +3035,31 @@
             line2.YValues.DataMember = "Y";
             line2.YValues.Value = new double[]
     {
-    582D,
-    498D,
-    523D,
-    470D,
-    504D,
-    557D,
-    469D,
-    404D,
-    328D,
-    412D,
-    344D,
-    409D,
-    462D,
-    483D,
-    369D,
-    416D,
-    449D,
-    519D,
-    425D,
-    366D,
-    248D,
-    174D,
-    215D,
-    156D,
-    158D,
+    82D,
+    37D,
+    62D,
+    127D,
+    5D,
+    73D,
+    176D,
+    172D,
+    258D,
+    341D,
+    386D,
+    352D,
+    264D,
+    198D,
+    146D,
+    214D,
+    107D,
+    176D,
+    99D,
+    140D,
+    119D,
+    98D,
+    218D,
+    148D,
+    198D,
     0D,
     0D,
     0D,
@@ -3416,31 +3409,31 @@
             line1.YValues.DataMember = "Y";
             line1.YValues.Value = new double[]
     {
-    236D,
-    232D,
-    228D,
-    218D,
-    186D,
-    172D,
-    169D,
-    159D,
-    126D,
-    82D,
-    72D,
-    53D,
-    102D,
-    91D,
-    51D,
-    32D,
-    72D,
-    124D,
-    82D,
-    89D,
-    73D,
-    100D,
-    72D,
-    22D,
-    69D,
+    326D,
+    298D,
+    304D,
+    326D,
+    349D,
+    364D,
+    362D,
+    369D,
+    345D,
+    305D,
+    269D,
+    286D,
+    289D,
+    291D,
+    291D,
+    310D,
+    302D,
+    342D,
+    328D,
+    289D,
+    298D,
+    298D,
+    297D,
+    340D,
+    310D,
     0D,
     0D,
     0D,
@@ -3554,16 +3547,6 @@
             nearestPoint2.Size = 10;
             nearestPoint2.Style = Steema.TeeChart.Tools.NearestPointStyles.Rectangle;
             // 
-            // tabPage3
-            // 
-            tabPage3.Location = new Point(4, 24);
-            tabPage3.Name = "tabPage3";
-            tabPage3.Padding = new Padding(3);
-            tabPage3.Size = new Size(1149, 398);
-            tabPage3.TabIndex = 2;
-            tabPage3.Text = "tabPage3";
-            tabPage3.UseVisualStyleBackColor = true;
-            // 
             // chartController1
             // 
             chartController1.ButtonSize = Steema.TeeChart.ControllerButtonSize.x16;
@@ -3621,21 +3604,21 @@
             // 
             // button1
             // 
-            button1.Location = new Point(195, 734);
+            button1.Location = new Point(276, 736);
             button1.Name = "button1";
             button1.Size = new Size(75, 23);
             button1.TabIndex = 17;
-            button1.Text = "button1";
+            button1.Text = "NEXT";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
             // button2
             // 
-            button2.Location = new Point(276, 734);
+            button2.Location = new Point(194, 734);
             button2.Name = "button2";
             button2.Size = new Size(75, 23);
             button2.TabIndex = 18;
-            button2.Text = "button2";
+            button2.Text = "PREVIOUS";
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
@@ -3694,14 +3677,14 @@
         private Steema.TeeChart.ChartController chartController1;
         private Steema.TeeChart.Tools.NearestPoint nearestPoint1;
         private ContextMenuStrip contextMenuStrip1;
-        private Steema.TeeChart.Styles.Bar bar1;
         private Button btnDays;
         private Button btnHours;
         private Button btnWeekend;
         private ListBox listBox1;
         private Steema.TeeChart.Tools.NearestPoint nearestPoint2;
-        private TabPage tabPage3;
         private Button button1;
         private Button button2;
+        private Steema.TeeChart.Styles.Bar bar1;
+        private HScrollBar hScrollBar1;
     }
 }

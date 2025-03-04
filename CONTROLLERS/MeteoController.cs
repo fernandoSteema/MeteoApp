@@ -23,7 +23,7 @@ namespace MeteoApp.CONTROLLERS
         {
             try
             {
-                string url = $"http://api.weatherapi.com/v1/current.json?key=41e4e0b33c464f47a78114036251402&q={city}&aqi=no";
+                string url = $"http://api.weatherapi.com/v1/current.json?key=c23a2b4ddd284dfcbb891155252802&q={city}&aqi=no";
 
               
                 HttpResponseMessage response = await client.GetAsync(url);
@@ -45,7 +45,7 @@ namespace MeteoApp.CONTROLLERS
         {
             try
             {
-                string url = $"http://api.weatherapi.com/v1/forecast.json?key=41e4e0b33c464f47a78114036251402&q={city}&days=3";
+                string url = $"http://api.weatherapi.com/v1/forecast.json?key=c23a2b4ddd284dfcbb891155252802&q={city}&days=3";
 
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
@@ -65,7 +65,7 @@ namespace MeteoApp.CONTROLLERS
         {
             try
             {
-                string url = $"http://api.weatherapi.com/v1/forecast.json?key=41e4e0b33c464f47a78114036251402&q={city}&days=1";
+                string url = $"http://api.weatherapi.com/v1/forecast.json?key=c23a2b4ddd284dfcbb891155252802&q={city}&days=1";
 
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
@@ -85,7 +85,7 @@ namespace MeteoApp.CONTROLLERS
         {
             try
             {
-                string url = $"http://api.weatherapi.com/v1/forecast.json?key=41e4e0b33c464f47a78114036251402&q={city}&days=10";
+                string url = $"http://api.weatherapi.com/v1/forecast.json?key=c23a2b4ddd284dfcbb891155252802&q={city}&days=10";
 
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
