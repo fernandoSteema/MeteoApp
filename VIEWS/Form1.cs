@@ -9,6 +9,7 @@ using System.Drawing;
 using Steema.TeeChart;
 using Steema.TeeChart.Editors.Series;
 using System;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace MeteoApp
@@ -26,6 +27,7 @@ namespace MeteoApp
         private Dictionary<DateTime, string> diasConFechas = new Dictionary<DateTime, string>();
         private Dictionary<double, string> horasConFechas = new Dictionary<double, string>();
         private Dictionary<string, List<string>> iconosPorDia = new Dictionary<string, List<string>>();
+        private Dictionary<string, Bitmap> imageCache = new Dictionary<string, Bitmap>();
         bool btnDay = false;
 
         public Form1()
@@ -52,201 +54,13 @@ namespace MeteoApp
         /// Retrieves the hourly weather evolution for the specified city and displays it in a bar chart.
         /// </summary>
         /// <param name="city">The name of the city to fetch the weather evolution for.</param>
-        //private async void GetAllTemperatures(string city)
-        //{
-        //    Bar barSeries = (Bar)tChart1.Series[0];
-        //    barSeries.Transparency = 85;
-
-        //    if (tChart1.Series.Count > 0)
-        //    {
-        //        tChart1.Series[0].Clear();
-        //        iconosPorDia.Clear();
-        //        diasConFechas.Clear();
-        //        horasConFechas.Clear();
-        //    }
-
-        //    allTemperatures = await metoController.GetEvolutionOfWeatherByCity(city);
-
-        //    if (allTemperatures != null)
-        //    {
-        //        tChart1.Page.ScaleLastPage = true;
-        //        int totalPoints = 0;
-        //        int pageCounter = 0;
-        //        int[] pageLimits = { 11, 24, 24 };
-
-        //        // Iterate over the list of forecast days in allTemperatures
-        //        foreach (var dia in allTemperatures.forecastday)
-        //        {
-        //            DateTime fecha = DateTime.Parse(dia.date);
-        //            string diaSemana = fecha.ToString("dddd");
-        //            string dateKey = fecha.ToString("yyyy-MM-dd");
-        //            diasConFechas[fecha] = diaSemana;
-
-        //            tChart1.Header.Text = $"EVOLUCIÓN DEL DÍA: {dia.date}";
-        //            List<string> tempIcons = new List<string>();
-
-
-        //            // Itera on the times of the forecast day
-        //            foreach (var hora in dia.hour)
-        //            {
-        //                DateTime fechaHora = DateTime.Parse(hora.time.ToString());
-
-        //                if (pageCounter == 0 && fechaHora < DateTime.Now)
-        //                    continue;
-
-        //                double horaValor = fechaHora.ToOADate();
-        //                barSeries.Add(horaValor, hora.temp_c, fechaHora.ToString("HH:mm"));
-        //                horasConFechas[horaValor] = dateKey;
-        //                string url = $"https:{hora.condition.Icon}";
-        //                tempIcons.Add(url);
-        //                totalPoints++;
-
-        //                if (totalPoints == pageLimits[pageCounter])
-        //                {
-        //                    if (pageCounter < pageLimits.Length - 1)
-        //                    {
-        //                        tChart1.Page.MaxPointsPerPage = pageLimits[pageCounter + 1];
-        //                        tChart1.Page.Next();
-        //                        pageCounter++;
-        //                        totalPoints = 0;
-        //                    }
-        //                }
-
-        //                // Filter times, only processing those equal to or after the current time.
-
-        //                //if (fechaHora >= DateTime.Now)
-        //                //{
-        //                //    double horaValor = fechaHora.ToOADate();
-        //                //    barSeries.Add(horaValor, hora.temp_c, fechaHora.ToString("HH:mm"));
-        //                //    horasConFechas[horaValor] = dateKey;
-        //                //    string url = $"https:{hora.condition.Icon}";
-        //                //    tempIcons.Add(url);
-        //                //    cont++;
-        //                //}
-
-        //            }
-
-        //            if (tempIcons.Count > 0)
-        //            {
-        //                iconosPorDia[dateKey] = tempIcons;
-        //            }
-
-        //            lblMinMax.Text = $"Máx. {dia.day.maxtemp_c}º Mín. {dia.day.mintemp_c}º ";
-
-        //        }
-        //        double minX = barSeries.MinXValue();
-        //        double maxX = barSeries.MaxXValue();
-        //        double range = maxX - minX;
-
-        //        hScrollBar1.Minimum = (int)minX;
-        //        hScrollBar1.Maximum = (int)maxX - (int)(range / tChart1.Page.Count);
-        //        hScrollBar1.Value = (int)minX;
-        //        hScrollBar1.SmallChange = 1;
-        //        hScrollBar1.LargeChange = (int)(range / tChart1.Page.Count);
-
-
-        //        //double minX = barSeries.MinXValue();
-        //        //double maxX = barSeries.MaxXValue();
-        //        //double range = maxX - minX;
-
-        //        //tChart1.Page.MaxPointsPerPage = pageLimits[0];
-        //        //tChart1.Axes.Bottom.SetMinMax(minX, minX + (range / tChart1.Page.Count));
-        //        //tChart1.Page.Current = 1;
-
-        //        //hScrollBar1.Minimum = (int)minX;
-        //        //hScrollBar1.Maximum = (int)maxX;
-        //        //hScrollBar1.Value = (int)minX;
-        //        //hScrollBar1.SmallChange = 1;
-        //        //hScrollBar1.LargeChange = (int)(range / tChart1.Page.Count);
-        //    }
-        //}
-
-        //private async void GetAllTemperatures(string city)
-        //{
-        //    Bar barSeries = (Bar)tChart1.Series[0];
-        //    barSeries.Transparency = 85;
-
-        //    if (tChart1.Series.Count > 0)
-        //    {
-        //        tChart1.Series[0].Clear();
-        //        iconosPorDia.Clear();
-        //        diasConFechas.Clear();
-        //        horasConFechas.Clear();
-        //    }
-
-        //    allTemperatures = await metoController.GetEvolutionOfWeatherByCity(city);
-
-        //    if (allTemperatures != null)
-        //    {
-        //        tChart1.Page.ScaleLastPage = true;
-        //        int totalPoints = 0;
-        //        int pageCounter = 0;
-        //        int[] pageLimits = { 11, 24, 24 };
-
-        //        tChart1.Page.MaxPointsPerPage = pageLimits[0]; // Establece el primer límite
-
-        //        foreach (var dia in allTemperatures.forecastday)
-        //        {
-        //            DateTime fecha = DateTime.Parse(dia.date);
-        //            string dateKey = fecha.ToString("yyyy-MM-dd");
-        //            diasConFechas[fecha] = fecha.ToString("dddd");
-
-        //            List<string> tempIcons = new List<string>();
-
-        //            foreach (var hora in dia.hour)
-        //            {
-        //                DateTime fechaHora = DateTime.Parse(hora.time.ToString());
-
-        //                if (pageCounter == 0 && fechaHora < DateTime.Now)
-        //                    continue;
-
-        //                double horaValor = fechaHora.ToOADate();
-        //                barSeries.Add(horaValor, hora.temp_c, fechaHora.ToString("HH:mm"));
-        //                horasConFechas[horaValor] = dateKey;
-        //                tempIcons.Add($"https:{hora.condition.Icon}");
-        //                totalPoints++;
-
-        //                // Control de paginación
-        //                if (totalPoints == pageLimits[pageCounter])
-        //                {
-        //                    if (pageCounter < pageLimits.Length - 1)
-        //                    {
-        //                        pageCounter++;
-        //                        tChart1.Page.MaxPointsPerPage = pageLimits[pageCounter];
-        //                    }
-        //                    totalPoints = 0;
-        //                }
-        //            }
-
-        //            if (tempIcons.Count > 0)
-        //            {
-        //                iconosPorDia[dateKey] = tempIcons;
-        //            }
-        //        }
-
-        //        // Ajustar los límites del scrollbar
-        //        double minX = barSeries.MinXValue();
-        //        double maxX = barSeries.MaxXValue();
-        //        double range = maxX - minX;
-
-        //        hScrollBar1.Minimum = 0;
-        //        hScrollBar1.Maximum = tChart1.Page.Count -1;
-        //        hScrollBar1.Value = 0;
-        //        hScrollBar1.SmallChange = 1;
-        //        hScrollBar1.LargeChange = 1;
-
-        //        tChart1.Page.Current = 1;
-        //        tChart1.Refresh();
-        //    }
-        //}
-
         private async void GetAllTemperatures(string city)
         {
             Bar barSeries = (Bar)tChart1.Series[0];
             barSeries.Transparency = 85;
             tChart1.Panning.Allow = ScrollModes.None;
 
-            // Limpiar datos previos
+
             if (tChart1.Series.Count > 0)
             {
                 tChart1.Series[0].Clear();
@@ -261,6 +75,7 @@ namespace MeteoApp
             {
                 tChart1.Page.ScaleLastPage = true;
 
+                // Iterate over the list of forecast days in allTemperatures
                 foreach (var dia in allTemperatures.forecastday)
                 {
                     DateTime fecha = DateTime.Parse(dia.date);
@@ -273,7 +88,7 @@ namespace MeteoApp
                     {
                         DateTime fechaHora = DateTime.Parse(hora.time.ToString());
 
-                        // Evitar agregar datos del pasado si es la primera página
+                        // Filter times, only processing those equal to or after the current time.
                         if (fechaHora < DateTime.Now)
                             continue;
 
@@ -300,26 +115,26 @@ namespace MeteoApp
             {
                 double minX = barSeries.MinXValue();
                 double maxX = barSeries.MaxXValue();
+
                 if (maxX - minX < 10)
                 {
-                    maxX = minX + 50;
+                    maxX = minX + 10;
                 }
 
-                double visibleRange = (maxX - minX) / 7;
+                double visibleRange = (maxX - minX) / 20;
 
-                // Configuración del ScrollBar
+              
                 hScrollBar1.Minimum = 0;
-                hScrollBar1.Maximum = Math.Max(1, (int)(maxX - minX));
+                hScrollBar1.Maximum = 990; //Provisional
                 hScrollBar1.Value = 0;
-                hScrollBar1.LargeChange = (int)(visibleRange / 2);
+                hScrollBar1.LargeChange = 10; 
 
-                // Ajustar la vista inicial del gráfico
                 double initialMax = minX + visibleRange;
                 tChart1.Axes.Bottom.SetMinMax(minX, initialMax);
             }
             else
             {
-                MessageBox.Show("No se encontraron datos para mostrar en el gráfico.");
+                MessageBox.Show("No data were found to show in the graph.");
             }
 
             tChart1.Invalidate();
@@ -584,12 +399,19 @@ namespace MeteoApp
 
         private Bitmap LoadBitmapFromUrl(string url)
         {
+            if (imageCache.ContainsKey(url))
+            {
+                return imageCache[url];
+            }
+
             using (WebClient client = new WebClient())
             {
                 byte[] imageBytes = client.DownloadData(url);
                 using (MemoryStream ms = new MemoryStream(imageBytes))
                 {
-                    return new Bitmap(Image.FromStream(ms));
+                    Bitmap bitmap = new Bitmap(Image.FromStream(ms));
+                    imageCache[url] = bitmap; // Cacheamos la imagen
+                    return bitmap;
                 }
             }
         }
@@ -641,26 +463,35 @@ namespace MeteoApp
         {
             tChart1.Axes.Bottom.Automatic = false;
 
-            // Obtener el valor mínimo y máximo del eje X según la posición del ScrollBar
+            if (tChart1.Series.Count == 0 || tChart1.Series[0].Count == 0)
+                return;
+
+            // Get the minimum and maximum value of the X-axis according to the position of the ScrollBar
             Bar barSeries = (Bar)tChart1.Series[0];
             double minX = barSeries.MinXValue();
             double maxX = barSeries.MaxXValue();
+            double visibleRange = (maxX - minX) / 7;
 
-            // Calcular el nuevo rango de visualización en el gráfico
-            double newMin = minX + e.NewValue;
-            double newMax = newMin + (maxX - minX) / 7;  // Mostrar una fracción del total (ajustar según lo necesites)
+            // Calculate the new display range on the chart
+            double newMin = minX + e.NewValue * (maxX - minX - visibleRange) / hScrollBar1.Maximum;
+            double newMax = newMin + visibleRange;
 
-            // Evitar que el rango se salga de los límites
+            // Prevent the range from being out of bounds
             if (newMax > maxX)
             {
                 newMax = maxX;
-                newMin = newMax - (maxX - minX) / 7;
+                newMin = newMax - visibleRange;
             }
 
-            // Actualizar el eje X con los nuevos valores
-            tChart1.Axes.Bottom.SetMinMax(newMin, newMax);
+            // Avoid out-of-range values
+            if (newMin < minX)
+            {
+                newMin = minX;
+                newMax = newMin + visibleRange;
+            }
 
-            // Forzar la actualización del gráfico
+            // Update X-axis with new values
+            tChart1.Axes.Bottom.SetMinMax(newMin, newMax);
             tChart1.Invalidate();
         }
 
