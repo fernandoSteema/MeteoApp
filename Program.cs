@@ -1,3 +1,5 @@
+using MeteoApp.LANGUAGES;
+
 namespace MeteoApp
 {
     internal static class Program
@@ -11,6 +13,7 @@ namespace MeteoApp
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
+            Language.ChangeLenguage(new Properties.Settings().lang);
             Application.Run(new Form1());
         }
     }

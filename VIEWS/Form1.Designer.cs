@@ -28,16 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
             Steema.TeeChart.Margins margins1 = new Steema.TeeChart.Margins();
             Steema.TeeChart.Drawing.Cursor cursor1 = new Steema.TeeChart.Drawing.Cursor();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             Steema.TeeChart.Margins margins2 = new Steema.TeeChart.Margins();
             Steema.TeeChart.Drawing.Cursor cursor2 = new Steema.TeeChart.Drawing.Cursor();
             btnSearch = new Steema.TeeChart.ButtonPen();
-            label1 = new Label();
+            lblSearch = new Label();
             txtBoxCity = new TextBox();
-            label2 = new Label();
+            lblSearch2 = new Label();
             lblCity = new Label();
             lblProvincia = new Label();
             lblTemp = new Label();
@@ -45,6 +44,7 @@
             lblMinMax = new Label();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            cmbBoxDays = new ComboBox();
             hScrollBar1 = new HScrollBar();
             tChart1 = new Steema.TeeChart.TChart();
             bar1 = new Steema.TeeChart.Styles.Bar();
@@ -54,18 +54,23 @@
             line1 = new Steema.TeeChart.Styles.Line();
             nearestPoint1 = new Steema.TeeChart.Tools.NearestPoint();
             nearestPoint2 = new Steema.TeeChart.Tools.NearestPoint();
-            chartController1 = new Steema.TeeChart.ChartController();
-            contextMenuStrip1 = new ContextMenuStrip(components);
             btnDays = new Button();
             btnHours = new Button();
-            btnWeekend = new Button();
             listBox1 = new ListBox();
-            button1 = new Button();
-            button2 = new Button();
+            toolStripButton1 = new ToolStripButton();
+            englishToolStripMenuItem = new ToolStripMenuItem();
+            catalanToolStripMenuItem = new ToolStripMenuItem();
+            spanishToolStripMenuItem = new ToolStripMenuItem();
+            menuStrip1 = new MenuStrip();
+            languageToolStripMenuItem = new ToolStripMenuItem();
+            englishToolStripMenuItem1 = new ToolStripMenuItem();
+            catalanToolStripMenuItem1 = new ToolStripMenuItem();
+            spanishToolStripMenuItem1 = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)imgIcon).BeginInit();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // btnSearch
@@ -79,14 +84,14 @@
             btnSearch.UseVisualStyleBackColor = true;
             btnSearch.Click += btnSearch_Click;
             // 
-            // label1
+            // lblSearch
             // 
-            label1.Font = new Font("Segoe UI", 12F);
-            label1.Location = new Point(534, 33);
-            label1.Name = "label1";
-            label1.Size = new Size(155, 31);
-            label1.TabIndex = 1;
-            label1.Text = "The weather in...";
+            lblSearch.Font = new Font("Segoe UI", 12F);
+            lblSearch.Location = new Point(534, 33);
+            lblSearch.Name = "lblSearch";
+            lblSearch.Size = new Size(155, 31);
+            lblSearch.TabIndex = 1;
+            lblSearch.Text = "The weather in...";
             // 
             // txtBoxCity
             // 
@@ -96,14 +101,14 @@
             txtBoxCity.Size = new Size(174, 32);
             txtBoxCity.TabIndex = 2;
             // 
-            // label2
+            // lblSearch2
             // 
-            label2.Font = new Font("Segoe UI", 9F);
-            label2.Location = new Point(680, 100);
-            label2.Name = "label2";
-            label2.Size = new Size(102, 25);
-            label2.TabIndex = 3;
-            label2.Text = "The weather in";
+            lblSearch2.Font = new Font("Segoe UI", 9F);
+            lblSearch2.Location = new Point(680, 100);
+            lblSearch2.Name = "lblSearch2";
+            lblSearch2.Size = new Size(102, 25);
+            lblSearch2.TabIndex = 3;
+            lblSearch2.Text = "The weather in";
             // 
             // lblCity
             // 
@@ -146,7 +151,7 @@
             lblMinMax.AutoSize = true;
             lblMinMax.Location = new Point(650, 243);
             lblMinMax.Name = "lblMinMax";
-            lblMinMax.Size = new Size(94, 15);
+            lblMinMax.Size = new Size(93, 15);
             lblMinMax.TabIndex = 10;
             lblMinMax.Text = "Máx. 15º Mín.5º ";
             // 
@@ -162,6 +167,7 @@
             // 
             // tabPage1
             // 
+            tabPage1.Controls.Add(cmbBoxDays);
             tabPage1.Controls.Add(hScrollBar1);
             tabPage1.Controls.Add(tChart1);
             tabPage1.Location = new Point(4, 24);
@@ -171,6 +177,15 @@
             tabPage1.TabIndex = 0;
             tabPage1.Text = "tabPage1";
             tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // cmbBoxDays
+            // 
+            cmbBoxDays.FormattingEnabled = true;
+            cmbBoxDays.Location = new Point(3, 6);
+            cmbBoxDays.Name = "cmbBoxDays";
+            cmbBoxDays.Size = new Size(121, 23);
+            cmbBoxDays.TabIndex = 18;
+            cmbBoxDays.SelectedIndexChanged += cmbBoxDays_SelectedIndexChanged;
             // 
             // hScrollBar1
             // 
@@ -1040,6 +1055,11 @@
             // 
             // 
             // 
+            tChart1.Panel.Bevel.ColorOne = Color.FromArgb(255, 255, 255);
+            tChart1.Panel.Bevel.ColorTwo = Color.FromArgb(128, 128, 128);
+            // 
+            // 
+            // 
             tChart1.Panel.Brush.Color = Color.FromArgb(255, 255, 255);
             tChart1.Panel.Brush.Solid = true;
             tChart1.Panel.Brush.Visible = true;
@@ -1303,10 +1323,14 @@
             // 
             // 
             // 
-            bar1.Brush.Color = Color.FromArgb(119, 153, 214);
+            bar1.Brush.Color = Color.FromArgb(38, 119, 153, 214);
+            // 
+            // 
+            // 
+            bar1.Brush.Gradient.Transparency = 85;
             bar1.Brush.Solid = true;
             bar1.Brush.Visible = true;
-            bar1.Color = Color.FromArgb(119, 153, 214);
+            bar1.Color = Color.FromArgb(38, 119, 153, 214);
             bar1.Cursor = cursor1;
             // 
             // 
@@ -1363,7 +1387,15 @@
             // 
             // 
             // 
-            bar1.Marks.Brush.Color = Color.FromArgb(255, 255, 255);
+            bar1.Marks.Arrow.Transparency = 85;
+            // 
+            // 
+            // 
+            bar1.Marks.Brush.Color = Color.FromArgb(38, 255, 255, 255);
+            // 
+            // 
+            // 
+            bar1.Marks.Brush.Gradient.Transparency = 85;
             bar1.Marks.Brush.Solid = true;
             bar1.Marks.Brush.Visible = true;
             // 
@@ -1373,7 +1405,11 @@
             // 
             // 
             // 
-            bar1.Marks.Font.Brush.Color = Color.Black;
+            bar1.Marks.Font.Brush.Color = Color.FromArgb(38, 0, 0, 0);
+            // 
+            // 
+            // 
+            bar1.Marks.Font.Brush.Gradient.Transparency = 85;
             bar1.Marks.Font.Brush.Solid = true;
             bar1.Marks.Font.Brush.Visible = true;
             // 
@@ -1400,10 +1436,18 @@
             // 
             // 
             // 
+            bar1.Marks.Pen.Transparency = 85;
             // 
             // 
             // 
-            bar1.Marks.Shadow.Brush.Color = Color.Gray;
+            // 
+            // 
+            // 
+            bar1.Marks.Shadow.Brush.Color = Color.FromArgb(38, 128, 128, 128);
+            // 
+            // 
+            // 
+            bar1.Marks.Shadow.Brush.Gradient.Transparency = 85;
             bar1.Marks.Shadow.Brush.Solid = true;
             bar1.Marks.Shadow.Brush.Visible = true;
             // 
@@ -1436,6 +1480,10 @@
             // 
             // 
             // 
+            bar1.Pen.Transparency = 85;
+            // 
+            // 
+            // 
             // 
             // 
             // 
@@ -1443,6 +1491,7 @@
             bar1.Shadow.Brush.Solid = true;
             bar1.Shadow.Brush.Visible = true;
             bar1.Title = "bar1";
+            bar1.Transparency = 85;
             // 
             // 
             // 
@@ -1558,12 +1607,12 @@
             bar1.YValues.DataMember = "Bar";
             bar1.YValues.Value = new double[]
     {
-    403D,
-    475D,
-    482D,
-    560D,
-    675D,
-    650D,
+    991D,
+    1015D,
+    1020D,
+    961D,
+    868D,
+    888D,
     0D,
     0D,
     0D,
@@ -3035,31 +3084,31 @@
             line2.YValues.DataMember = "Y";
             line2.YValues.Value = new double[]
     {
-    82D,
-    37D,
-    62D,
-    127D,
-    5D,
-    73D,
-    176D,
-    172D,
-    258D,
-    341D,
-    386D,
-    352D,
-    264D,
-    198D,
-    146D,
-    214D,
-    107D,
-    176D,
-    99D,
-    140D,
-    119D,
-    98D,
-    218D,
-    148D,
-    198D,
+    561D,
+    465D,
+    375D,
+    472D,
+    583D,
+    481D,
+    526D,
+    536D,
+    623D,
+    634D,
+    582D,
+    590D,
+    616D,
+    665D,
+    596D,
+    665D,
+    776D,
+    680D,
+    659D,
+    677D,
+    782D,
+    700D,
+    765D,
+    695D,
+    751D,
     0D,
     0D,
     0D,
@@ -3409,31 +3458,31 @@
             line1.YValues.DataMember = "Y";
             line1.YValues.Value = new double[]
     {
-    326D,
-    298D,
-    304D,
-    326D,
-    349D,
-    364D,
-    362D,
-    369D,
-    345D,
-    305D,
-    269D,
-    286D,
-    289D,
-    291D,
-    291D,
-    310D,
-    302D,
-    342D,
-    328D,
-    289D,
-    298D,
-    298D,
-    297D,
-    340D,
-    310D,
+    412D,
+    441D,
+    476D,
+    476D,
+    478D,
+    474D,
+    471D,
+    509D,
+    478D,
+    512D,
+    548D,
+    561D,
+    513D,
+    559D,
+    531D,
+    514D,
+    563D,
+    549D,
+    501D,
+    515D,
+    484D,
+    488D,
+    530D,
+    580D,
+    601D,
     0D,
     0D,
     0D,
@@ -3547,22 +3596,6 @@
             nearestPoint2.Size = 10;
             nearestPoint2.Style = Steema.TeeChart.Tools.NearestPointStyles.Rectangle;
             // 
-            // chartController1
-            // 
-            chartController1.ButtonSize = Steema.TeeChart.ControllerButtonSize.x16;
-            chartController1.Chart = tChart1;
-            chartController1.LabelValues = true;
-            chartController1.Location = new Point(0, 0);
-            chartController1.Name = "chartController1";
-            chartController1.Size = new Size(1501, 25);
-            chartController1.TabIndex = 12;
-            chartController1.Text = "chartController1";
-            // 
-            // contextMenuStrip1
-            // 
-            contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(61, 4);
-            // 
             // btnDays
             // 
             btnDays.Location = new Point(195, 258);
@@ -3581,15 +3614,7 @@
             btnHours.TabIndex = 14;
             btnHours.Text = "Hours";
             btnHours.UseVisualStyleBackColor = true;
-            // 
-            // btnWeekend
-            // 
-            btnWeekend.Location = new Point(357, 258);
-            btnWeekend.Name = "btnWeekend";
-            btnWeekend.Size = new Size(75, 36);
-            btnWeekend.TabIndex = 15;
-            btnWeekend.Text = "Weekend";
-            btnWeekend.UseVisualStyleBackColor = true;
+            btnHours.Click += btnHours_Click;
             // 
             // listBox1
             // 
@@ -3602,25 +3627,66 @@
             listBox1.TabIndex = 16;
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             // 
-            // button1
+            // toolStripButton1
             // 
-            button1.Location = new Point(276, 736);
-            button1.Name = "button1";
-            button1.Size = new Size(75, 23);
-            button1.TabIndex = 17;
-            button1.Text = "NEXT";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripButton1.Image = (Image)resources.GetObject("toolStripButton1.Image");
+            toolStripButton1.ImageTransparentColor = Color.Magenta;
+            toolStripButton1.Name = "toolStripButton1";
+            toolStripButton1.Size = new Size(23, 22);
+            toolStripButton1.Text = "toolStripButton1";
             // 
-            // button2
+            // englishToolStripMenuItem
             // 
-            button2.Location = new Point(194, 734);
-            button2.Name = "button2";
-            button2.Size = new Size(75, 23);
-            button2.TabIndex = 18;
-            button2.Text = "PREVIOUS";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            englishToolStripMenuItem.Name = "englishToolStripMenuItem";
+            englishToolStripMenuItem.Size = new Size(32, 19);
+            // 
+            // catalanToolStripMenuItem
+            // 
+            catalanToolStripMenuItem.Name = "catalanToolStripMenuItem";
+            catalanToolStripMenuItem.Size = new Size(32, 19);
+            // 
+            // spanishToolStripMenuItem
+            // 
+            spanishToolStripMenuItem.Name = "spanishToolStripMenuItem";
+            spanishToolStripMenuItem.Size = new Size(32, 19);
+            // 
+            // menuStrip1
+            // 
+            menuStrip1.Items.AddRange(new ToolStripItem[] { languageToolStripMenuItem });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(1501, 24);
+            menuStrip1.TabIndex = 17;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // languageToolStripMenuItem
+            // 
+            languageToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { englishToolStripMenuItem1, catalanToolStripMenuItem1, spanishToolStripMenuItem1 });
+            languageToolStripMenuItem.Name = "languageToolStripMenuItem";
+            languageToolStripMenuItem.Size = new Size(71, 20);
+            languageToolStripMenuItem.Text = "Language";
+            // 
+            // englishToolStripMenuItem1
+            // 
+            englishToolStripMenuItem1.Name = "englishToolStripMenuItem1";
+            englishToolStripMenuItem1.Size = new Size(115, 22);
+            englishToolStripMenuItem1.Text = "English";
+            englishToolStripMenuItem1.Click += englishToolStripMenuItem1_Click;
+            // 
+            // catalanToolStripMenuItem1
+            // 
+            catalanToolStripMenuItem1.Name = "catalanToolStripMenuItem1";
+            catalanToolStripMenuItem1.Size = new Size(115, 22);
+            catalanToolStripMenuItem1.Text = "Catalan";
+            catalanToolStripMenuItem1.Click += catalanToolStripMenuItem1_Click;
+            // 
+            // spanishToolStripMenuItem1
+            // 
+            spanishToolStripMenuItem1.Name = "spanishToolStripMenuItem1";
+            spanishToolStripMenuItem1.Size = new Size(115, 22);
+            spanishToolStripMenuItem1.Text = "Spanish";
+            spanishToolStripMenuItem1.Click += spanishToolStripMenuItem1_Click;
             // 
             // Form1
             // 
@@ -3628,30 +3694,29 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ButtonHighlight;
             ClientSize = new Size(1501, 796);
-            Controls.Add(button2);
-            Controls.Add(button1);
             Controls.Add(listBox1);
-            Controls.Add(btnWeekend);
             Controls.Add(btnHours);
             Controls.Add(btnDays);
-            Controls.Add(chartController1);
             Controls.Add(tabControl1);
             Controls.Add(lblMinMax);
             Controls.Add(imgIcon);
             Controls.Add(lblTemp);
             Controls.Add(lblProvincia);
             Controls.Add(lblCity);
-            Controls.Add(label2);
+            Controls.Add(lblSearch2);
             Controls.Add(txtBoxCity);
-            Controls.Add(label1);
+            Controls.Add(lblSearch);
             Controls.Add(btnSearch);
+            Controls.Add(menuStrip1);
             Name = "Form1";
-            Text = "Form1";
+            Text = "METEO APP";
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)imgIcon).EndInit();
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             tabPage2.ResumeLayout(false);
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -3659,9 +3724,9 @@
         #endregion
 
         private Steema.TeeChart.ButtonPen btnSearch;
-        private Label label1;
+        private Label lblSearch;
         private TextBox txtBoxCity;
-        private Label label2;
+        private Label lblSearch2;
         private Label lblCity;
         private Label lblProvincia;
         private Label lblTemp;
@@ -3674,17 +3739,22 @@
         private Steema.TeeChart.TChart tChart2;
         private Steema.TeeChart.Styles.Line line1;
         private Steema.TeeChart.Styles.Line line2;
-        private Steema.TeeChart.ChartController chartController1;
         private Steema.TeeChart.Tools.NearestPoint nearestPoint1;
-        private ContextMenuStrip contextMenuStrip1;
-        private Button btnDays;
-        private Button btnHours;
-        private Button btnWeekend;
+        public Button btnDays;
+        public Button btnHours;
         private ListBox listBox1;
         private Steema.TeeChart.Tools.NearestPoint nearestPoint2;
-        private Button button1;
-        private Button button2;
         private Steema.TeeChart.Styles.Bar bar1;
         private HScrollBar hScrollBar1;
+        private ToolStripButton toolStripButton1;
+        private ToolStripMenuItem englishToolStripMenuItem;
+        private ToolStripMenuItem catalanToolStripMenuItem;
+        private ToolStripMenuItem spanishToolStripMenuItem;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem languageToolStripMenuItem;
+        private ToolStripMenuItem englishToolStripMenuItem1;
+        private ToolStripMenuItem catalanToolStripMenuItem1;
+        private ToolStripMenuItem spanishToolStripMenuItem1;
+        private ComboBox cmbBoxDays;
     }
 }

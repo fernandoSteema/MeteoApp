@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MeteoApp.CONTROLLERS;
+using MeteoApp.LANGUAGES;
 using MeteoApp.MODELS;
-using Steema.TeeChart.Editors.Series;
 
 namespace MeteoApp.VIEWS
 {
@@ -22,6 +17,13 @@ namespace MeteoApp.VIEWS
         private MeteoController _meteoController;
         private string _city;
         private bool _btnDay = false;
+
+
+        public Form2()
+        {
+            InitializeComponent();
+        }
+
         public Form2(Forecast allTemperatures, string diaSeleccionado, DateTime fechaSeleccionada, TimeSpan horaSeleccionada, MeteoController meteoController, string city, bool btnDay)
         {
             InitializeComponent();
@@ -34,14 +36,13 @@ namespace MeteoApp.VIEWS
             _btnDay = btnDay;
         }
 
-        private async void Form2_Load(object sender, EventArgs e)
+        public async Task CargarDatos()
         {
-            //ASIGNAR PROPIEDADES METEOROLOGICAS: 
             _allTemperatures = await _meteoController.GetEvolutionOfWeatherByCity(_city);
-            
+
             if (_allTemperatures != null && !_btnDay)
             {
-                lblFecha.Text = $"{_fechaSeleccionada.ToString("yyyy-MM-dd")}";
+                lblFecha.Text = $"{_fechaSeleccionada:yyyy-MM-dd}";
                 lblHora.Text = $"Today at {_horaSeleccionada}";
 
                 foreach (var dia in _allTemperatures.forecastday)
@@ -64,12 +65,12 @@ namespace MeteoApp.VIEWS
             else if (_btnDay)
             {
                 _allTemperatures = await _meteoController.GetPrevisionBy10Days(_city);
-                if(_allTemperatures != null)
+                if (_allTemperatures != null)
                 {
                     foreach (var dia in _allTemperatures.forecastday)
                     {
-                        DateTime fecha = DateTime.Parse(dia.date); 
-                        string diaSemana = fecha.ToString("dddd");  
+                        DateTime fecha = DateTime.Parse(dia.date);
+                        string diaSemana = fecha.ToString("dddd");
 
                         if (diaSemana == _diaSeleccionado)
                         {
@@ -77,7 +78,6 @@ namespace MeteoApp.VIEWS
                             lblHora.Text = $"{_diaSeleccionado}";
 
                             lblWind.Text = $"🡢 {dia.day.maxwind_kph} km/h";
-                            //lblCloud.Text = $"☁︎ {dia.day.}%";
                             lblSnow.Text = $"❄️ {dia.day.daily_chance_of_snow} %";
                             lblRain.Text = $"☂️ {dia.day.totalprecip_mm} mm";
                             lblPrecip.Text = $"☂️ {dia.day.daily_chance_of_rain}%";
@@ -86,10 +86,14 @@ namespace MeteoApp.VIEWS
                         }
                     }
                 }
-               
             }
+
+            Language.Controllers(this);
+        }
+
+        private void Form2_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
-    
-

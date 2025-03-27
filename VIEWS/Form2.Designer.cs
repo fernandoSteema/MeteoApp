@@ -30,12 +30,12 @@
         {
             lblFecha = new Label();
             lblHora = new Label();
-            label1 = new Label();
-            label2 = new Label();
-            label3 = new Label();
-            label4 = new Label();
-            label5 = new Label();
-            label6 = new Label();
+            lblWiind = new Label();
+            lblSnoow = new Label();
+            lblHumidity = new Label();
+            lblClouds = new Label();
+            lblRains = new Label();
+            lblPrecipitations = new Label();
             lblWind = new Label();
             lblCloud = new Label();
             lblRain = new Label();
@@ -43,7 +43,7 @@
             lblSnow = new Label();
             lblHumity = new Label();
             lblPressure = new Label();
-            label = new Label();
+            lblPresure = new Label();
             SuspendLayout();
             // 
             // lblFecha
@@ -67,65 +67,65 @@
             lblHora.TabIndex = 1;
             lblHora.Text = "Today at 2:00 p.m.";
             // 
-            // label1
+            // lblWiind
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 12F);
-            label1.Location = new Point(12, 96);
-            label1.Name = "label1";
-            label1.Size = new Size(52, 21);
-            label1.TabIndex = 2;
-            label1.Text = "WIND";
+            lblWiind.AutoSize = true;
+            lblWiind.Font = new Font("Segoe UI", 12F);
+            lblWiind.Location = new Point(12, 96);
+            lblWiind.Name = "lblWiind";
+            lblWiind.Size = new Size(52, 21);
+            lblWiind.TabIndex = 2;
+            lblWiind.Text = "WIND";
             // 
-            // label2
+            // lblSnoow
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 12F);
-            label2.Location = new Point(12, 195);
-            label2.Name = "label2";
-            label2.Size = new Size(58, 21);
-            label2.TabIndex = 3;
-            label2.Text = "SNOW";
+            lblSnoow.AutoSize = true;
+            lblSnoow.Font = new Font("Segoe UI", 12F);
+            lblSnoow.Location = new Point(12, 195);
+            lblSnoow.Name = "lblSnoow";
+            lblSnoow.Size = new Size(58, 21);
+            lblSnoow.TabIndex = 3;
+            lblSnoow.Text = "SNOW";
             // 
-            // label3
+            // lblHumidity
             // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(203, 195);
-            label3.Name = "label3";
-            label3.Size = new Size(82, 21);
-            label3.TabIndex = 4;
-            label3.Text = "HUMIDITY";
+            lblHumidity.AutoSize = true;
+            lblHumidity.Font = new Font("Segoe UI", 12F);
+            lblHumidity.Location = new Point(203, 195);
+            lblHumidity.Name = "lblHumidity";
+            lblHumidity.Size = new Size(82, 21);
+            lblHumidity.TabIndex = 4;
+            lblHumidity.Text = "HUMIDITY";
             // 
-            // label4
+            // lblClouds
             // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 12F);
-            label4.Location = new Point(203, 96);
-            label4.Name = "label4";
-            label4.Size = new Size(70, 21);
-            label4.TabIndex = 5;
-            label4.Text = "CLOUDS";
+            lblClouds.AutoSize = true;
+            lblClouds.Font = new Font("Segoe UI", 12F);
+            lblClouds.Location = new Point(203, 96);
+            lblClouds.Name = "lblClouds";
+            lblClouds.Size = new Size(70, 21);
+            lblClouds.TabIndex = 5;
+            lblClouds.Text = "CLOUDS";
             // 
-            // label5
+            // lblRains
             // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI", 12F);
-            label5.Location = new Point(384, 96);
-            label5.Name = "label5";
-            label5.Size = new Size(46, 21);
-            label5.TabIndex = 6;
-            label5.Text = "RAIN";
+            lblRains.AutoSize = true;
+            lblRains.Font = new Font("Segoe UI", 12F);
+            lblRains.Location = new Point(384, 96);
+            lblRains.Name = "lblRains";
+            lblRains.Size = new Size(46, 21);
+            lblRains.TabIndex = 6;
+            lblRains.Text = "RAIN";
             // 
-            // label6
+            // lblPrecipitations
             // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI", 12F);
-            label6.Location = new Point(384, 195);
-            label6.Name = "label6";
-            label6.Size = new Size(187, 21);
-            label6.TabIndex = 7;
-            label6.Text = "PROB. OF PRECIPITATION";
+            lblPrecipitations.AutoSize = true;
+            lblPrecipitations.Font = new Font("Segoe UI", 12F);
+            lblPrecipitations.Location = new Point(384, 195);
+            lblPrecipitations.Name = "lblPrecipitations";
+            lblPrecipitations.Size = new Size(187, 21);
+            lblPrecipitations.TabIndex = 7;
+            lblPrecipitations.Text = "PROB. OF PRECIPITATION";
             // 
             // lblWind
             // 
@@ -197,15 +197,15 @@
             lblPressure.TabIndex = 15;
             lblPressure.Text = "🕛 1019 hPa";
             // 
-            // label
+            // lblPresure
             // 
-            label.AutoSize = true;
-            label.Font = new Font("Segoe UI", 12F);
-            label.Location = new Point(12, 301);
-            label.Name = "label";
-            label.Size = new Size(84, 21);
-            label.TabIndex = 14;
-            label.Text = "PRESSURE";
+            lblPresure.AutoSize = true;
+            lblPresure.Font = new Font("Segoe UI", 12F);
+            lblPresure.Location = new Point(12, 301);
+            lblPresure.Name = "lblPresure";
+            lblPresure.Size = new Size(84, 21);
+            lblPresure.TabIndex = 14;
+            lblPresure.Text = "PRESSURE";
             // 
             // Form2
             // 
@@ -213,19 +213,19 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(624, 396);
             Controls.Add(lblPressure);
-            Controls.Add(label);
+            Controls.Add(lblPresure);
             Controls.Add(lblHumity);
             Controls.Add(lblSnow);
             Controls.Add(lblPrecip);
             Controls.Add(lblRain);
             Controls.Add(lblCloud);
             Controls.Add(lblWind);
-            Controls.Add(label6);
-            Controls.Add(label5);
-            Controls.Add(label4);
-            Controls.Add(label3);
-            Controls.Add(label2);
-            Controls.Add(label1);
+            Controls.Add(lblPrecipitations);
+            Controls.Add(lblRains);
+            Controls.Add(lblClouds);
+            Controls.Add(lblHumidity);
+            Controls.Add(lblSnoow);
+            Controls.Add(lblWiind);
             Controls.Add(lblHora);
             Controls.Add(lblFecha);
             Name = "Form2";
@@ -239,12 +239,12 @@
 
         private Label lblFecha;
         private Label lblHora;
-        private Label label1;
-        private Label label2;
-        private Label label3;
-        private Label label4;
-        private Label label5;
-        private Label label6;
+        private Label lblWiind;
+        private Label lblSnoow;
+        private Label lblHumidity;
+        private Label lblClouds;
+        private Label lblRains;
+        private Label lblPrecipitations;
         private Label lblWind;
         private Label lblCloud;
         private Label lblRain;
@@ -252,6 +252,6 @@
         private Label lblSnow;
         private Label lblHumity;
         private Label lblPressure;
-        private Label label;
+        private Label lblPresure;
     }
 }
