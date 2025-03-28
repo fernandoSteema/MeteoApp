@@ -16,21 +16,40 @@ namespace MeteoApp
 {
     public partial class Form1 : Form
     {
+        #region PRIVATE FIELDS
+        // Controllers
         private MeteoController metoController;
+
+        // Weather Respones
         private WeatherResponse temperaturaActual;
         private Forecast allTemperatures;
+
+        // Lists
         List<string> lstIconUrls = new List<string>();
+        private List<double> verticalLinePositions = new List<double>();
+
+        // Chart Tools
         NearestPoint toolNPTemp = null;
         NearestPoint toolNPHumidity = null;
         Annotation annotation;
-        Steema.TeeChart.Axis vertAxis, horizAxis;
+        Axis vertAxis, horizAxis;
+
+        // Dictionaries
         private Dictionary<DateTime, string> diasConFechas = new Dictionary<DateTime, string>();
         private Dictionary<double, string> horasConFechas = new Dictionary<double, string>();
         private Dictionary<string, List<string>> iconosPorDia = new Dictionary<string, List<string>>();
         private Dictionary<string, Bitmap> imageCache = new Dictionary<string, Bitmap>();
+        private Dictionary<string, Tuple<double, double>> rangoDias = new Dictionary<string, Tuple<double, double>>();
+
+        // Other  Variables
+        private bool eventAdded = false;
+        private double? firstBarXNextDay = null;
+        private double? lastBarX;
+        public string currentCity;
         public bool btnDay = false;
-        bool eventAdded = false;
         Form2 form = new Form2();
+        #endregion
+
 
         public Form1()
         {
@@ -42,26 +61,27 @@ namespace MeteoApp
             cmbBoxDays.Visible = false;
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            this.MaximumSize = SystemInformation.PrimaryMonitorMaximizedWindowSize;
+            this.WindowState = FormWindowState.Maximized;
+            this.AcceptButton = btnSearch;
+        }
+
+
+        #region UPDATE METHODS
+        /// <summary>
+        /// Updates the controllers and the UI elements such as the menu.
+        /// </summary>
         public void Update()
         {
             Language.Controllers(this);
         }
 
-        private async void GetTemperaturaActual(string city)
-        {
-            temperaturaActual = await metoController.GetCurrentTemperatura(city);
 
-            if (temperaturaActual != null)
-            {
-                lblTemp.Text = Math.Truncate(temperaturaActual.Current.temp_c).ToString() + "ºC";
-                lblCity.Text = temperaturaActual.Location.Name;
-                lblProvincia.Text = $"{temperaturaActual.Location.Region} region";
-                imgIcon.Load($"https:{temperaturaActual.Current.condition.Icon}");
-
-            }
-        }
-
-        private double? firstBarXNextDay = null;
+        /// <summary>
+        /// Updates the annotations on the chart, adding labels for each vertical line.
+        /// </summary>
         public void UpdateAnnotations()
         {
             // Remove previous annotations to avoid duplicates
@@ -117,7 +137,11 @@ namespace MeteoApp
             }
         }
 
-        public void UpdateForecastDays()
+
+        /// <summary>
+        /// Adds the days of the week in a cmbBox and updates depending on the chosen language.
+        /// </summary>
+        public void UpdateAndLoadForecastDays()
         {
             if (allTemperatures == null || allTemperatures.forecastday.Count < 3)
             {
@@ -154,7 +178,61 @@ namespace MeteoApp
             }
             else if (cmbBoxDays.Items.Count > 0)
             {
-                cmbBoxDays.SelectedIndex = 0;
+                cmbBoxDays.SelectedIndex = selectedIndex >= 0 && selectedIndex < cmbBoxDays.Items.Count ? selectedIndex : 0;
+            }
+        }
+
+
+        /// <summary>
+        /// Updates the language of the chart headers and series titles in the `tChart2` chart.
+        /// It translates the evolution of the day, temperature, and humidity texts based on the selected language.
+        /// If translations are not available, it uses default values.
+        /// </summary>
+        public void UpdateChartLanguage()
+        {
+            if (allTemperatures != null && allTemperatures.forecastday.Count > 0)
+            {
+                // Obtener traducciones
+                string evolutionText = Language.info.ContainsKey("EVOLUTION_OF_DAY") ? Language.info["EVOLUTION_OF_DAY"] : "EVOLUCIÓ DEL DIA";
+                string tempHumText = Language.info.ContainsKey("TEMP_HUMIDITY") ? Language.info["TEMP_HUMIDITY"] : "Temperatura / Humitat relativa";
+
+                // Actualizar encabezados del gráfico sin modificar los datos
+                tChart2.Header.Text = $"{evolutionText}: {allTemperatures.forecastday[0].date}";
+                tChart2.SubHeader.Text = tempHumText;
+
+                tChart2.Refresh();
+            }
+
+            if (tChart2.Series.Count >= 2)
+            {
+                string tempText = Language.info.ContainsKey("TemperatureTchart2") ? Language.info["TemperatureTchart2"] : "Temperatura";
+                string humText = Language.info.ContainsKey("HumidityTchart2") ? Language.info["HumidityTchart2"] : "Humitat";
+
+                tChart2.Series[0].Title = tempText;
+                tChart2.Series[1].Title = humText;
+
+                tChart2.Refresh();
+            }
+        }
+        #endregion
+
+
+        #region TEMPERATURE METHODS
+        /// <summary>
+        ///  Gets the current temperature of the specified city and updates the UI elements.
+        /// </summary>
+        /// <param name="city">The city for which to get the temperature</param>
+        private async void GetTemperaturaActual(string city)
+        {
+            temperaturaActual = await metoController.GetCurrentTemperatura(city);
+
+            if (temperaturaActual != null)
+            {
+                lblTemp.Text = Math.Truncate(temperaturaActual.Current.temp_c).ToString() + "ºC";
+                lblCity.Text = temperaturaActual.Location.Name;
+                lblProvincia.Text = $"{temperaturaActual.Location.Region} region";
+                imgIcon.Load($"https:{temperaturaActual.Current.condition.Icon}");
+
             }
         }
 
@@ -163,11 +241,6 @@ namespace MeteoApp
         /// Retrieves the hourly weather evolution for the specified city and displays it in a bar chart.
         /// </summary>
         /// <param name="city">The name of the city to fetch the weather evolution for.</param>
-        private List<double> verticalLinePositions = new List<double>();
-        private double? lastBarX;
-        public string currentCity;
-        private Dictionary<string, Tuple<double, double>> rangoDias = new Dictionary<string, Tuple<double, double>>();
-
         public async void GetAllTemperatures(string city)
         {
             cmbBoxDays.Visible = true;
@@ -288,50 +361,14 @@ namespace MeteoApp
 
             tChart1.Refresh();
             UpdateAnnotations();
-            LoadForecastDays();
-        }
-        private void LoadForecastDays()
-        {
-            if (allTemperatures == null || allTemperatures.forecastday.Count < 3)
-            {
-                MessageBox.Show("No hay suficientes datos de pronóstico.");
-                return;
-            }
-
-            cmbBoxDays.Items.Clear();
-
-            for (int i = 0; i < 3; i++)
-            {
-                DateTime fecha = DateTime.Parse(allTemperatures.forecastday[i].date);
-                string diaSemana = fecha.ToString("dddd");
-
-                // Traducir si existe en el diccionario de idiomas
-                if (Language.info.ContainsKey(diaSemana))
-                {
-                    diaSemana = Language.info[diaSemana];
-                }
-
-                string diaFormateado = $"{diaSemana} ({fecha:dd/MM})";
-
-                string dateKey = fecha.ToString("yyyy-MM-dd");
-
-                diasConFechas[fecha] = diaFormateado;
-
-                cmbBoxDays.Items.Add(diaFormateado);
-            }
-
-            // Seleccionar el primer día por defecto si hay elementos en el ComboBox
-            if (cmbBoxDays.Items.Count > 0)
-            {
-                cmbBoxDays.SelectedIndex = 0;
-            }
+            UpdateAndLoadForecastDays();
         }
 
 
         /// <summary>
         /// Retrieves the 10-day weather forecast for the specified city and displays it in a bar chart.
         /// </summary>
-        /// <param name="city">The name of the city to fetch the weather forecast for.</param>
+        /// <param name="city">The name of the city to fetch the weather forecast for</param>
         /// 
         public async void GetAllTemperaturesByDays(string city)
         {
@@ -407,35 +444,11 @@ namespace MeteoApp
             tChart1.Invalidate();
         }
 
-        private void btnSearch_Click(object sender, EventArgs e)
-        {
-
-            string city = txtBoxCity.Text;
-            GetTemperaturaActual(city);
-
-            // Suscribir el evento solo una vez para evitar múltiples dibujos
-            if (!eventAdded)
-            {
-                tChart1.AfterDraw += TChart1_AfterDraw; ; ;
-                eventAdded = true;
-            }
-            GetAllTemperatures(city);
-            GetTemperatureAndHumidity(city);
-        }
 
         /// <summary>
-        /// Draws vertical lines on the chart at specified X-axis positions after the chart is rendered.
+        /// Obtains and displays the evolution of the temperature and relative humidity of a city on a graph.
         /// </summary>
-        private void TChart1_AfterDraw(object sender, Steema.TeeChart.Drawing.IGraphics3D g)
-        {
-            int offsetX = 34;
-            foreach (var verticalLineX in verticalLinePositions)
-            {
-                int pixelX = tChart1.Axes.Bottom.CalcXPosValue(verticalLineX);
-                g.Line(pixelX, tChart1.Axes.Left.IStartPos, pixelX, tChart1.Axes.Left.IEndPos);
-            }
-        }
-
+        /// <param name="city">The city for which you wish to obtain temperature and humidity data</param>
         private async void GetTemperatureAndHumidity(string city)
         {
 
@@ -517,65 +530,29 @@ namespace MeteoApp
             tChart2.Axes.Right.AutomaticMaximum = false;
         }
 
-        public void UpdateChartLanguage()
+        #endregion
+
+
+        #region EVENT HANDLERS
+
+        // Search button (executed when the search button is clicked)
+        private void btnSearch_Click(object sender, EventArgs e)
         {
-            if (allTemperatures != null && allTemperatures.forecastday.Count > 0)
+
+            string city = txtBoxCity.Text;
+            GetTemperaturaActual(city);
+
+            // Suscribir el evento solo una vez para evitar múltiples dibujos
+            if (!eventAdded)
             {
-                // Obtener traducciones
-                string evolutionText = Language.info.ContainsKey("EVOLUTION_OF_DAY") ? Language.info["EVOLUTION_OF_DAY"] : "EVOLUCIÓ DEL DIA";
-                string tempHumText = Language.info.ContainsKey("TEMP_HUMIDITY") ? Language.info["TEMP_HUMIDITY"] : "Temperatura / Humitat relativa";
-
-                // Actualizar encabezados del gráfico sin modificar los datos
-                tChart2.Header.Text = $"{evolutionText}: {allTemperatures.forecastday[0].date}";
-                tChart2.SubHeader.Text = tempHumText;
-
-                tChart2.Refresh();
+                tChart1.AfterDraw += TChart1_AfterDraw; ; ;
+                eventAdded = true;
             }
-
-            if (tChart2.Series.Count >= 2)
-            {
-                string tempText = Language.info.ContainsKey("TemperatureTchart2") ? Language.info["TemperatureTchart2"] : "Temperatura";
-                string humText = Language.info.ContainsKey("HumidityTchart2") ? Language.info["HumidityTchart2"] : "Humitat";
-
-                tChart2.Series[0].Title = tempText;
-                tChart2.Series[1].Title = humText;
-
-                tChart2.Refresh();
-            }
+            GetAllTemperatures(city);
+            GetTemperatureAndHumidity(city);
         }
 
-        private void ToolNPHumidity_Change(object? sender, EventArgs e)
-        {
-            Line graficoLiniaTemperature = (Line)tChart2.Series[0];
-            Line graficoLiniaHumidity = (Line)tChart2.Series[1];
-
-            string tempText = Language.info.ContainsKey("Temperature") ? Language.info["Temperature"] : "Temperature";
-            string humText = Language.info.ContainsKey("Humidity") ? Language.info["Humidity"] : "Humidity";
-
-            annotation.Text = $"{tempText}: {graficoLiniaTemperature.YValues[toolNPTemp.Point]}ºC \n " +
-                              $" {humText}: {graficoLiniaHumidity.YValues[toolNPHumidity.Point]}%";
-
-        }
-
-        private void TChart2_MouseMove(object? sender, MouseEventArgs e)
-        {
-            toolNPHumidity.Active = e.X >= horizAxis.IStartPos && e.X <= horizAxis.IEndPos &&
-            e.Y >= vertAxis.IStartPos && e.Y <= vertAxis.IEndPos;
-
-            toolNPTemp.Active = e.X >= horizAxis.IStartPos && e.X <= horizAxis.IEndPos &&
-            e.Y >= vertAxis.IStartPos && e.Y <= vertAxis.IEndPos;
-
-            // Activate annotation if at least one of the tools is active
-            annotation.Active = toolNPHumidity.Active || toolNPTemp.Active;
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            this.MaximumSize = SystemInformation.PrimaryMonitorMaximizedWindowSize;
-            this.WindowState = FormWindowState.Maximized;
-            this.AcceptButton = btnSearch;
-        }
-
+        // Button to display temperatures per day (loads the temperature graph for each day of the week)
         private void btnDays_Click(object sender, EventArgs e)
         {
             btnDay = true;
@@ -583,6 +560,58 @@ namespace MeteoApp
             GetAllTemperaturesByDays(city);
         }
 
+        // Button for displaying hourly temperatures (loads the 3-day graph but displays each day's temperature by hour)
+        private void btnHours_Click(object sender, EventArgs e)
+        {
+            string city = txtBoxCity.Text;
+            GetTemperaturaActual(city);
+            GetAllTemperatures(city);
+            GetTemperatureAndHumidity(city);
+        }
+
+        private void englishToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            Language.ChangeLenguage("en.txt");
+            Update();
+            Language.UpdateMenuStrip(menuStrip1);
+
+        }
+
+        private void catalanToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            Language.ChangeLenguage("ca.txt");
+            Update();
+            Language.UpdateMenuStrip(menuStrip1);
+
+        }
+
+        private void spanishToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            Language.ChangeLenguage("es.txt");
+            Update();
+            Language.UpdateMenuStrip(menuStrip1);
+        }
+
+        #endregion
+
+
+        #region TChart DRAWING HANDLERS
+        /// <summary>
+        /// Draws vertical lines on the chart at specified X-axis positions after the chart is rendered.
+        /// </summary>
+        private void TChart1_AfterDraw(object sender, Steema.TeeChart.Drawing.IGraphics3D g)
+        {
+            int offsetX = 34;
+            foreach (var verticalLineX in verticalLinePositions)
+            {
+                int pixelX = tChart1.Axes.Bottom.CalcXPosValue(verticalLineX);
+                g.Line(pixelX, tChart1.Axes.Left.IStartPos, pixelX, tChart1.Axes.Left.IEndPos);
+            }
+        }
+
+        /// <summary>
+        ///  Draw the images on the graph for the temperatures per day, and also for the temperatures per hour.
+        /// </summary>
         private void tChart1_AfterDraw(object sender, Steema.TeeChart.Drawing.IGraphics3D g)
         {
             foreach (Series s in tChart1.Series)
@@ -657,6 +686,33 @@ namespace MeteoApp
                     }
                 }
             }
+        }
+        #endregion
+
+
+        private void ToolNPHumidity_Change(object? sender, EventArgs e)
+        {
+            Line graficoLiniaTemperature = (Line)tChart2.Series[0];
+            Line graficoLiniaHumidity = (Line)tChart2.Series[1];
+
+            string tempText = Language.info.ContainsKey("Temperature") ? Language.info["Temperature"] : "Temperature";
+            string humText = Language.info.ContainsKey("Humidity") ? Language.info["Humidity"] : "Humidity";
+
+            annotation.Text = $"{tempText}: {graficoLiniaTemperature.YValues[toolNPTemp.Point]}ºC \n " +
+                              $" {humText}: {graficoLiniaHumidity.YValues[toolNPHumidity.Point]}%";
+
+        }
+
+        private void TChart2_MouseMove(object? sender, MouseEventArgs e)
+        {
+            toolNPHumidity.Active = e.X >= horizAxis.IStartPos && e.X <= horizAxis.IEndPos &&
+            e.Y >= vertAxis.IStartPos && e.Y <= vertAxis.IEndPos;
+
+            toolNPTemp.Active = e.X >= horizAxis.IStartPos && e.X <= horizAxis.IEndPos &&
+            e.Y >= vertAxis.IStartPos && e.Y <= vertAxis.IEndPos;
+
+            // Activate annotation if at least one of the tools is active
+            annotation.Active = toolNPHumidity.Active || toolNPTemp.Active;
         }
 
         private Bitmap LoadBitmapFromUrl(string url)
@@ -774,37 +830,6 @@ namespace MeteoApp
             // Sincronizar el ScrollBar con la página actual
             if (tChart1.Page.Current >= hScrollBar1.Minimum && tChart1.Page.Current <= hScrollBar1.Maximum)
                 hScrollBar1.Value = tChart1.Page.Current - 1;
-        }
-
-        private void englishToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            Language.ChangeLenguage("en.txt");
-            Update();
-            Language.UpdateMenuStrip(menuStrip1);
-
-        }
-
-        private void catalanToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            Language.ChangeLenguage("ca.txt");
-            Update();
-            Language.UpdateMenuStrip(menuStrip1);
-
-        }
-
-        private void spanishToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            Language.ChangeLenguage("es.txt");
-            Update();
-            Language.UpdateMenuStrip(menuStrip1);
-        }
-
-        private void btnHours_Click(object sender, EventArgs e)
-        {
-            string city = txtBoxCity.Text;
-            GetTemperaturaActual(city);
-            GetAllTemperatures(city);
-            GetTemperatureAndHumidity(city);
         }
 
         private void cmbBoxDays_SelectedIndexChanged(object sender, EventArgs e)

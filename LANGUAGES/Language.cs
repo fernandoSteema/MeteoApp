@@ -37,7 +37,7 @@ namespace MeteoApp.LANGUAGES
                 form1.btnHours.Text = Language.info.ContainsKey("btnHours") ? Language.info["btnHours"] : "Hours";
                 form1.UpdateAnnotations();
                 // Aquí actualizamos solo los nombres de los días sin recargar el gráfico
-                form1.UpdateForecastDays();
+                form1.UpdateAndLoadForecastDays();
 
                 if (form1.btnDay)
                 {
