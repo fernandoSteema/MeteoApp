@@ -14,7 +14,8 @@ namespace MeteoApp.LANGUAGES
         private static void Load(string file)
         {
             info.Clear();
-            foreach (string line in File.ReadLines($"LANG\\{file}"))
+            //foreach (string line in File.ReadLines($"LANG\\{file}"))
+            foreach (string line in File.ReadLines($"..\\..\\..\\LANG\\{file}"))
             {
                 if(line.Contains("="))
                 {
