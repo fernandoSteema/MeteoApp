@@ -59,6 +59,7 @@ namespace MeteoApp
             Update();
             Language.UpdateMenuStrip(menuStrip1);
             cmbBoxDays.Visible = false;
+            tChart1[0].Marks.Visible = false;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -192,6 +193,9 @@ namespace MeteoApp
         {
             if (allTemperatures != null && allTemperatures.forecastday.Count > 0)
             {
+                string headerTxt = Language.info.ContainsKey("Forecast_by_hour") ? Language.info["Forecast_by_hour"] : "Previsió per hores";
+                tChart1.Header.Text = headerTxt;
+
                 // Obtener traducciones
                 string evolutionText = Language.info.ContainsKey("EVOLUTION_OF_DAY") ? Language.info["EVOLUTION_OF_DAY"] : "EVOLUCIÓ DEL DIA";
                 string tempHumText = Language.info.ContainsKey("TEMP_HUMIDITY") ? Language.info["TEMP_HUMIDITY"] : "Temperatura / Humitat relativa";
@@ -260,11 +264,13 @@ namespace MeteoApp
                 horasConFechas.Clear();
             }
 
+            string headerTxt = Language.info.ContainsKey("Forecast_by_hour") ? Language.info["Forecast_by_hour"] : "Previsió per hores";
+            tChart1.Header.Text = headerTxt;
+
             allTemperatures = await metoController.GetEvolutionOfWeatherByCity(city);
 
             if (allTemperatures != null && allTemperatures.forecastday.Count > 0)
             {
-                tChart1.Page.ScaleLastPage = true;
                 double? firstBarX = null;
                 DateTime? lastBarTime = null;
                 lastBarX = null;
@@ -278,7 +284,7 @@ namespace MeteoApp
 
                     List<string> tempIcons = new List<string>();
 
-                    // Reiniciar el primer valor del día actual
+                    // Reset the first value of the current day
                     firstBarX = null;
 
                     foreach (var hora in dia.hour)
@@ -293,14 +299,14 @@ namespace MeteoApp
                         horasConFechas[horaValor] = dateKey;
                         tempIcons.Add($"https:{hora.condition.Icon}");
 
-                        // Guardar el primer valor X del día
+                        // Save the first X value of the day
                         if (firstBarX == null)
                             firstBarX = horaValor;
 
-                        // Guardar la última barra del día actual
+                        // Save the last bar of the current day
                         lastBarTime = fechaHora;
-                        lastBarX = horaValor; 
-                        
+                        lastBarX = horaValor;
+
                         rangoDias[dateKey] = new Tuple<double, double>(firstBarX ?? 0, lastBarX ?? 0);
                     }
 
@@ -362,11 +368,13 @@ namespace MeteoApp
             tChart1.Refresh();
             UpdateAnnotations();
             UpdateAndLoadForecastDays();
+
+            tChart1.Invalidate();
         }
 
 
         /// <summary>
-        /// Retrieves the 10-day weather forecast for the specified city and displays it in a bar chart.
+        /// Retrieves the 7-day weather forecast for the specified city and displays it in a bar chart.
         /// </summary>
         /// <param name="city">The name of the city to fetch the weather forecast for</param>
         /// 
@@ -387,7 +395,6 @@ namespace MeteoApp
             btnDay = true;
             currentCity = city;
 
-            // Limpiar datos previos
             barSeries.Clear();
             iconosPorDia.Clear();
             diasConFechas.Clear();
@@ -406,9 +413,9 @@ namespace MeteoApp
             if (allTemperatures != null && allTemperatures.forecastday.Count > 0)
             {
                 // Traducir título del gráfico
-                tChart1.Header.Text = Language.info.ContainsKey("FORECAST_10_DAYS")
-                    ? Language.info["FORECAST_10_DAYS"]
-                    : "FORECAST (10 days)";
+                tChart1.Header.Text = Language.info.ContainsKey("FORECAST_7_DAYS")
+                    ? Language.info["FORECAST_7_DAYS"]
+                    : "FORECAST (7 days)";
 
                 foreach (var dia in allTemperatures.forecastday)
                 {
@@ -545,9 +552,11 @@ namespace MeteoApp
             // Suscribir el evento solo una vez para evitar múltiples dibujos
             if (!eventAdded)
             {
-                tChart1.AfterDraw += TChart1_AfterDraw; ; ;
+                tChart1.AfterDraw += TChart1_AfterDraw;
                 eventAdded = true;
             }
+
+            tChart1.Refresh();
             GetAllTemperatures(city);
             GetTemperatureAndHumidity(city);
         }
@@ -613,7 +622,18 @@ namespace MeteoApp
         ///  Draw the images on the graph for the temperatures per day, and also for the temperatures per hour.
         /// </summary>
         private void tChart1_AfterDraw(object sender, Steema.TeeChart.Drawing.IGraphics3D g)
-        {
+        {   
+            tChart1.Graphics3D.ClearClipRegions();
+
+            Rectangle openTopRect = new Rectangle(
+                                    tChart1.Chart.ChartRect.X, 
+                                    0, tChart1.Chart.ChartRect.Width, 
+                                    tChart1.Chart.ChartRect.Height + 
+                                    tChart1.Chart.ChartRect.Y
+            );
+
+            tChart1.Graphics3D.ClipRectangle(openTopRect);
+
             foreach (Series s in tChart1.Series)
             {
                 if (!(s is Bar)) continue;
@@ -686,6 +706,8 @@ namespace MeteoApp
                     }
                 }
             }
+
+            tChart1.Graphics3D.ClearClipRegions();
         }
         #endregion
 
@@ -728,7 +750,7 @@ namespace MeteoApp
                 using (MemoryStream ms = new MemoryStream(imageBytes))
                 {
                     Bitmap bitmap = new Bitmap(Image.FromStream(ms));
-                    imageCache[url] = bitmap; // Cacheamos la imagen
+                    imageCache[url] = bitmap;
                     return bitmap;
                 }
             }
@@ -759,18 +781,16 @@ namespace MeteoApp
 
                 string city = txtBoxCity.Text;
 
-                // Crear y mostrar Form2
                 Form2 form = new Form2(allTemperatures, valor, fechaSeleccionada, horaSeleccionada, metoController, city, btnDay);
-                form.Show();  // Show en vez de ShowDialog para poder usar await
+                form.Show();
 
-                // Esperar a que los datos se carguen correctamente
+
                 _ = form.CargarDatos();
             }
         }
 
         private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
         {
-            // Si btnDay está activo, el scroll no debe funcionar
             if (btnDay) return;
 
             tChart1.Axes.Bottom.Automatic = false;
@@ -778,44 +798,48 @@ namespace MeteoApp
             if (tChart1.Series.Count == 0 || tChart1.Series[0].Count == 0)
                 return;
 
-            // Obtener el valor mínimo y máximo del eje X según la posición del ScrollBar
+            // Get the minimum and maximum value of the X-axis according to the position of the ScrollBar
             Bar barSeries = (Bar)tChart1.Series[0];
             double minX = barSeries.MinXValue();
             double maxX = barSeries.MaxXValue();
             double visibleRange = (maxX - minX) / 7;
 
-            // Calcular el nuevo rango de visualización en el gráfico
+            // Calculate the new display range on the chart
             double newMin = minX + e.NewValue * (maxX - minX - visibleRange) / hScrollBar1.Maximum;
             double newMax = newMin + visibleRange;
 
-            // Evitar que el rango se salga de los límites
+            // Prevent the range from going out of bounds
             if (newMax > maxX)
             {
                 newMax = maxX;
                 newMin = newMax - visibleRange;
             }
 
-            // Evitar valores fuera de rango
+            // Avoid out-of-range values
             if (newMin < minX)
             {
                 newMin = minX;
                 newMax = newMin + visibleRange;
             }
 
-            // Actualizar el eje X con los nuevos valores
             tChart1.Axes.Bottom.SetMinMax(newMin, newMax);
             UpdateAnnotations();
 
-            //PARTE DEL CMBOX:
-            foreach(var kvp in rangoDias)
+            // PART OF THE CMBOX:
+            foreach (var kvp in rangoDias)
             {
+                // Gets the minimum and maximum values for the selected day in the dictionary.
                 double minDay = kvp.Value.Item1;
                 double maxDay = kvp.Value.Item2;
 
                 if (newMin >= minDay && newMin <= maxDay)
                 {
+                    // Gets the formatted name of the corresponding day in ‘daysWithDates’.
                     string formattedDay = diasConFechas[DateTime.Parse(kvp.Key)];
+
+                    // Find the index of the day in the ComboBox.
                     int index = cmbBoxDays.Items.IndexOf(formattedDay);
+
                     if (index != -1 && cmbBoxDays.SelectedIndex != index)
                     {
                         cmbBoxDays.SelectedIndex = index;
@@ -825,9 +849,9 @@ namespace MeteoApp
             }
         }
 
+        // Synchronise the ScrollBar with the current page
         private void tChart1_Scroll(object sender, EventArgs e)
         {
-            // Sincronizar el ScrollBar con la página actual
             if (tChart1.Page.Current >= hScrollBar1.Minimum && tChart1.Page.Current <= hScrollBar1.Maximum)
                 hScrollBar1.Value = tChart1.Page.Current - 1;
         }
@@ -836,7 +860,7 @@ namespace MeteoApp
         {
             if (cmbBoxDays.SelectedItem == null) return;
 
-            string selectedDay = cmbBoxDays.SelectedItem.ToString(); 
+            string selectedDay = cmbBoxDays.SelectedItem.ToString();
             string fechaStr = selectedDay.Split('(')[1].Split(')')[0];
 
 
@@ -856,7 +880,7 @@ namespace MeteoApp
                     double totalRange = globalMaxX - globalMinX;
 
                     double selectedRange = minX - globalMinX;
-                    int sliderValue = (int) ((selectedRange / totalRange) * hScrollBar1.Maximum);
+                    int sliderValue = (int)((selectedRange / totalRange) * hScrollBar1.Maximum);
 
                     if (sliderValue >= hScrollBar1.Minimum && sliderValue <= hScrollBar1.Maximum)
                     {
@@ -873,5 +897,21 @@ namespace MeteoApp
                 MessageBox.Show("Error al convertir la fecha seleccionada.");
             }
         }
+
+        private void tChart1_BeforeDrawSeries_1(object sender, Steema.TeeChart.Drawing.IGraphics3D g)
+        {
+            if (tChart1.Series[0] is Bar)
+            {
+                int visibleBars = tChart1.Series[0].LastVisibleIndex - tChart1.Series[0].FirstVisibleIndex + 1;
+
+                if (visibleBars > 20)
+                    ((Bar)(tChart1.Series[0])).CustomBarWidth = 33;  
+                else if (visibleBars > 10)
+                    ((Bar)(tChart1.Series[0])).CustomBarWidth = 44; 
+                else
+                    ((Bar)(tChart1.Series[0])).CustomBarWidth = 50;  
+            }
+        }
+
     }
 }

@@ -13,7 +13,7 @@ namespace MeteoApp.CONTROLLERS
     public class MeteoController
     {
         private HttpClient client;
-        private const string API_KEY = "e0a0439bb468434887782252252803";
+        private const string API_KEY = "41e4e0b33c464f47a78114036251402";
 
         private static Dictionary<string, (WeatherResponse, DateTime)> cache = new Dictionary<string, (WeatherResponse, DateTime)>();
         private static readonly TimeSpan cacheDuration = TimeSpan.FromMinutes(10); // Duración de la caché

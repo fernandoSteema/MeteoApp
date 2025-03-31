@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            Steema.TeeChart.Margins margins3 = new Steema.TeeChart.Margins();
+            Steema.TeeChart.Drawing.Cursor cursor3 = new Steema.TeeChart.Drawing.Cursor();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             Steema.TeeChart.Margins margins1 = new Steema.TeeChart.Margins();
             Steema.TeeChart.Drawing.Cursor cursor1 = new Steema.TeeChart.Drawing.Cursor();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            Steema.TeeChart.Margins margins2 = new Steema.TeeChart.Margins();
-            Steema.TeeChart.Drawing.Cursor cursor2 = new Steema.TeeChart.Drawing.Cursor();
             btnSearch = new Steema.TeeChart.ButtonPen();
             lblSearch = new Label();
             txtBoxCity = new TextBox();
@@ -1086,11 +1086,11 @@
             // 
             // 
             // 
-            margins1.Bottom = 100;
-            margins1.Left = 100;
-            margins1.Right = 100;
-            margins1.Top = 100;
-            tChart1.Printer.Margins = margins1;
+            margins3.Bottom = 100;
+            margins3.Left = 100;
+            margins3.Right = 100;
+            margins3.Top = 100;
+            tChart1.Printer.Margins = margins3;
             tChart1.Series.Add(bar1);
             tChart1.Size = new Size(1157, 402);
             // 
@@ -1315,7 +1315,9 @@
             tChart1.Zoom.Brush.Visible = true;
             tChart1.Scroll += tChart1_Scroll;
             tChart1.AfterDraw += tChart1_AfterDraw;
+            tChart1.BeforeDrawSeries += tChart1_BeforeDrawSeries_1;
             tChart1.ClickSeries += tChart1_ClickSeries;
+       
             // 
             // bar1
             // 
@@ -1331,7 +1333,7 @@
             bar1.Brush.Solid = true;
             bar1.Brush.Visible = true;
             bar1.Color = Color.FromArgb(38, 119, 153, 214);
-            bar1.Cursor = cursor1;
+            bar1.Cursor = cursor3;
             // 
             // 
             // 
@@ -1607,12 +1609,12 @@
             bar1.YValues.DataMember = "Bar";
             bar1.YValues.Value = new double[]
     {
-    991D,
-    1015D,
-    1020D,
-    961D,
-    868D,
-    888D,
+    821D,
+    813D,
+    882D,
+    905D,
+    998D,
+    1017D,
     0D,
     0D,
     0D,
@@ -2581,11 +2583,11 @@
             // 
             // 
             // 
-            margins2.Bottom = 100;
-            margins2.Left = 100;
-            margins2.Right = 100;
-            margins2.Top = 100;
-            tChart2.Printer.Margins = margins2;
+            margins1.Bottom = 100;
+            margins1.Left = 100;
+            margins1.Right = 100;
+            margins1.Top = 100;
+            tChart2.Printer.Margins = margins1;
             tChart2.Series.Add(line2);
             tChart2.Series.Add(line1);
             tChart2.Size = new Size(1146, 395);
@@ -2827,7 +2829,7 @@
             line2.Brush.Solid = true;
             line2.Brush.Visible = true;
             line2.Color = Color.FromArgb(255, 207, 104);
-            line2.Cursor = cursor2;
+            line2.Cursor = cursor1;
             // 
             // 
             // 
@@ -3084,31 +3086,31 @@
             line2.YValues.DataMember = "Y";
             line2.YValues.Value = new double[]
     {
-    561D,
-    465D,
-    375D,
-    472D,
-    583D,
-    481D,
-    526D,
-    536D,
-    623D,
-    634D,
-    582D,
-    590D,
-    616D,
-    665D,
-    596D,
-    665D,
-    776D,
-    680D,
-    659D,
-    677D,
-    782D,
-    700D,
-    765D,
-    695D,
-    751D,
+    967D,
+    898D,
+    945D,
+    894D,
+    928D,
+    949D,
+    998D,
+    935D,
+    948D,
+    986D,
+    1014D,
+    952D,
+    964D,
+    1017D,
+    960D,
+    957D,
+    1048D,
+    1042D,
+    957D,
+    950D,
+    914D,
+    865D,
+    906D,
+    806D,
+    687D,
     0D,
     0D,
     0D,
@@ -3202,7 +3204,7 @@
             line1.Brush.Solid = true;
             line1.Brush.Visible = true;
             line1.Color = Color.FromArgb(119, 153, 214);
-            line1.Cursor = cursor2;
+            line1.Cursor = cursor1;
             // 
             // 
             // 
@@ -3458,31 +3460,31 @@
             line1.YValues.DataMember = "Y";
             line1.YValues.Value = new double[]
     {
-    412D,
-    441D,
-    476D,
-    476D,
-    478D,
-    474D,
-    471D,
-    509D,
-    478D,
-    512D,
-    548D,
-    561D,
-    513D,
-    559D,
-    531D,
-    514D,
-    563D,
-    549D,
-    501D,
-    515D,
-    484D,
-    488D,
-    530D,
-    580D,
-    601D,
+    1043D,
+    1086D,
+    1078D,
+    1049D,
+    1053D,
+    1014D,
+    1033D,
+    1073D,
+    1078D,
+    1108D,
+    1096D,
+    1134D,
+    1148D,
+    1193D,
+    1210D,
+    1195D,
+    1186D,
+    1151D,
+    1144D,
+    1184D,
+    1183D,
+    1194D,
+    1190D,
+    1195D,
+    1206D,
     0D,
     0D,
     0D,
