@@ -24,6 +24,7 @@ namespace MeteoApp.LANGUAGES
                 }
             }
         }
+
         public static void ChangeLenguage(string file)
         {
             Properties.Settings config = new Properties.Settings();
@@ -33,7 +34,7 @@ namespace MeteoApp.LANGUAGES
 
             if (Application.OpenForms["Form1"] is Form1 form1)
             {
-                form1.UpdateChartLanguage();
+                //form1.UpdateChartLanguage();
                 form1.btnDays.Text = Language.info.ContainsKey("btnDays") ? Language.info["btnDays"] : "Days";
                 form1.btnHours.Text = Language.info.ContainsKey("btnHours") ? Language.info["btnHours"] : "Hours";
                 form1.UpdateAnnotations();

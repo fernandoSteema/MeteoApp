@@ -11,10 +11,10 @@ namespace MeteoApp.VIEWS
     public partial class Form2 : Form
     {
         private Forecast _allTemperatures;
-        private string _diaSeleccionado;
-        private DateTime _fechaSeleccionada;
-        private TimeSpan _horaSeleccionada;
-        private MeteoController _meteoController;
+        private string _selectedDay;
+        private DateTime _dateSelected;
+        private TimeSpan _hourSelected;
+        private WeatherController _weatherController;
         private string _city;
         private bool _btnDay = false;
 
@@ -24,65 +24,65 @@ namespace MeteoApp.VIEWS
             InitializeComponent();
         }
 
-        public Form2(Forecast allTemperatures, string diaSeleccionado, DateTime fechaSeleccionada, TimeSpan horaSeleccionada, MeteoController meteoController, string city, bool btnDay)
+        public Form2(Forecast allTemperatures, string selectedDay, DateTime dateSelected, TimeSpan hourSelected, WeatherController weatherController, string city, bool btnDay)
         {
             InitializeComponent();
             _allTemperatures = allTemperatures;
-            _diaSeleccionado = diaSeleccionado;
-            _fechaSeleccionada = fechaSeleccionada;
-            _horaSeleccionada = horaSeleccionada;
-            _meteoController = meteoController;
+            _selectedDay = selectedDay;
+            _dateSelected = dateSelected;
+            _hourSelected = hourSelected;
+            _weatherController = weatherController;
             _city = city;
             _btnDay = btnDay;
         }
 
-        public async Task CargarDatos()
+        public async Task LoadData()
         {
-            _allTemperatures = await _meteoController.GetEvolutionOfWeatherByCity(_city);
+            _allTemperatures = await _weatherController.GetEvolutionOfWeatherByCity(_city);
 
             if (_allTemperatures != null && !_btnDay)
             {
-                lblFecha.Text = $"{_fechaSeleccionada:yyyy-MM-dd}";
-                lblHora.Text = $"Today at {_horaSeleccionada}";
+                lblFecha.Text = $"{_dateSelected:yyyy-MM-dd}";
+                lblHora.Text = $"Today at {_hourSelected}";
 
-                foreach (var dia in _allTemperatures.forecastday)
+                foreach (var day in _allTemperatures.forecastday)
                 {
-                    foreach (var hora in dia.hour)
+                    foreach (var hour in day.hour)
                     {
-                        if (hora.time.TimeOfDay.ToString() == _horaSeleccionada.ToString())
+                        if (hour.time.TimeOfDay.ToString() == _hourSelected.ToString())
                         {
-                            lblWind.Text = $"🡢 {hora.wind_kph} km/h";
-                            lblCloud.Text = $"☁︎ {hora.cloud}%";
-                            lblSnow.Text = $"❄️ {hora.snow_cm} cm";
-                            lblRain.Text = $"☂️ {hora.precip_mm} mm";
-                            lblPrecip.Text = $"☂️ {dia.day.daily_chance_of_rain}%";
-                            lblHumity.Text = $"💧 {hora.humidity}%";
-                            lblPressure.Text = $"🕛 {hora.pressure_mb} hPa";
+                            lblWind.Text = $"🡢 {hour.wind_kph} km/h";
+                            lblCloud.Text = $"☁︎ {hour.cloud}%";
+                            lblSnow.Text = $"❄️ {hour.snow_cm} cm";
+                            lblRain.Text = $"☂️ {hour.precip_mm} mm";
+                            lblPrecip.Text = $"☂️ {day.day.daily_chance_of_rain}%";
+                            lblHumity.Text = $"💧 {hour.humidity}%";
+                            lblPressure.Text = $"🕛 {hour.pressure_mb} hPa";
                         }
                     }
                 }
             }
             else if (_btnDay)
             {
-                _allTemperatures = await _meteoController.GetPrevisionBy10Days(_city);
+                _allTemperatures = await _weatherController.GetPrevisionBy10Days(_city);
                 if (_allTemperatures != null)
                 {
-                    foreach (var dia in _allTemperatures.forecastday)
+                    foreach (Forecastday day in _allTemperatures.forecastday)
                     {
-                        DateTime fecha = DateTime.Parse(dia.date);
-                        string diaSemana = fecha.ToString("dddd");
+                        DateTime date = DateTime.Parse(day.date);
+                        string dayOfTheWeek = date.ToString("dddd");
 
-                        if (diaSemana == _diaSeleccionado)
+                        if (dayOfTheWeek == _selectedDay)
                         {
-                            lblFecha.Text = $"{dia.date}";
-                            lblHora.Text = $"{_diaSeleccionado}";
+                            lblFecha.Text = $"{day.date}";
+                            lblHora.Text = $"{_selectedDay}";
 
-                            lblWind.Text = $"🡢 {dia.day.maxwind_kph} km/h";
-                            lblSnow.Text = $"❄️ {dia.day.daily_chance_of_snow} %";
-                            lblRain.Text = $"☂️ {dia.day.totalprecip_mm} mm";
-                            lblPrecip.Text = $"☂️ {dia.day.daily_chance_of_rain}%";
-                            lblHumity.Text = $"💧 {dia.day.avghumidity}%";
-                            lblPressure.Text = $"🕛 {dia.day.maxtemp_c} ºC";
+                            lblWind.Text = $"🡢 {day.day.maxwind_kph} km/h";
+                            lblSnow.Text = $"❄️ {day.day.daily_chance_of_snow} %";
+                            lblRain.Text = $"☂️ {day.day.totalprecip_mm} mm";
+                            lblPrecip.Text = $"☂️ {day.day.daily_chance_of_rain}%";
+                            lblHumity.Text = $"💧 {day.day.avghumidity}%";
+                            lblPressure.Text = $"🕛 {day.day.maxtemp_c} ºC";
                         }
                     }
                 }

@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace MeteoApp.CONTROLLERS
 {
-    public class MeteoController
+    public class WeatherController
     {
         private HttpClient client;
         private const string API_KEY = "41e4e0b33c464f47a78114036251402";
@@ -27,7 +27,7 @@ namespace MeteoApp.CONTROLLERS
         private static Dictionary<string, (Forecast, DateTime)> tempCacheBy10Days = new Dictionary<string, (Forecast, DateTime)>();
         private static readonly TimeSpan tempCacheBy10DaysDuration = TimeSpan.FromHours(6); 
 
-        public MeteoController()
+        public WeatherController()
         {
             client = new HttpClient();
         }
@@ -64,7 +64,7 @@ namespace MeteoApp.CONTROLLERS
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error al obtener la temperatura: {ex.Message}");
+                throw new Exception($"Error in obtaining temperature: {ex.Message}");
             }
         }
 
@@ -78,10 +78,9 @@ namespace MeteoApp.CONTROLLERS
          {
             try
             {
-                // Checks if there is data in the cache and if it is recent at the current time. 
                 if (forecastCache.ContainsKey(city))
                 {
-                    // Extracts the cached weather forecast and its timestamp from the dictionary.
+                    
                     var (cachedForecast, timestamp) = forecastCache[city];
 
                     if ((DateTime.Now - timestamp) < forecastCacheDuration && cachedForecast.forecastday.Count == 3)
@@ -89,28 +88,25 @@ namespace MeteoApp.CONTROLLERS
                         return cachedForecast;
                     }
                 }
-                // If the condition is not met, it makes a new API call.
+              
                 string url = $"http://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={city}&days=3";
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
-
                 
                 string responseJson = await response.Content.ReadAsStringAsync();
                 WeatherResponse weatherResponse = JsonConvert.DeserializeObject<WeatherResponse>(responseJson);
 
                 Forecast forecast = weatherResponse.Forecast;
-
-                // Stores the forecast in the cache if it contains data for 3 days.
+              
                 if (forecast.forecastday.Count == 3)
                 {
-                    // Saves the weather response in the cache with the current timestamp.
                     forecastCache[city] = (forecast, DateTime.Now);
                 }
                 return forecast;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error al obtener las temperaturas diarias: {ex.Message}");
+                throw new Exception($"Error in obtaining daily temperatures: {ex.Message}");
             }
         }
 
@@ -118,7 +114,7 @@ namespace MeteoApp.CONTROLLERS
         {
             try
             {
-                // Checks if there is data in the cache and if it is recent at the current time.
+               
                 if (humidityTempCache.ContainsKey(city))
                 {
                     var (cachedForecast, timestamp) = humidityTempCache[city];
@@ -129,7 +125,6 @@ namespace MeteoApp.CONTROLLERS
                     }
                 }
 
-                // If the condition is not met, it makes a new API call.
                 string url = $"http://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={city}&days=1";
 
                 HttpResponseMessage response = await client.GetAsync(url);
@@ -139,14 +134,13 @@ namespace MeteoApp.CONTROLLERS
                 WeatherResponse weatherResponse = JsonConvert.DeserializeObject<WeatherResponse>(responseJson);
                 Forecast forecast = weatherResponse.Forecast;
 
-                // Saves the weather response in the cache with the current timestamp.
                 forecastCache[city] = (forecast, DateTime.Now);
                 return forecast;
 
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error al obtener las temperaturas diarias: {ex.Message}");
+                throw new Exception($"Error in obtaining daily temperatures: {ex.Message}");
             }
         }
 
@@ -154,7 +148,6 @@ namespace MeteoApp.CONTROLLERS
         {
             try
             {
-                // Checks if there is data in the cache and if it is recent at the current time.
                 if (tempCacheBy10Days.ContainsKey(city))
                 {
                     var(cachedForecast, timestamp) = tempCacheBy10Days[city];
@@ -163,8 +156,7 @@ namespace MeteoApp.CONTROLLERS
                         return cachedForecast;
                     }
                 }
-
-                // If the condition is not met, it makes a new API call.
+                
                 string url = $"http://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={city}&days=10";
 
                 HttpResponseMessage response = await client.GetAsync(url);
@@ -174,14 +166,14 @@ namespace MeteoApp.CONTROLLERS
                 WeatherResponse weatherResponse = JsonConvert.DeserializeObject<WeatherResponse>(responseJson);
                 Forecast forecast = weatherResponse.Forecast;
 
-                // Saves the weather response in the cache with the current timestamp.
+                
                 tempCacheBy10Days[city]= (forecast, DateTime.Now);
                 return forecast;
 
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error al obtener las temperaturas diarias: {ex.Message}");
+                throw new Exception($"Error in obtaining daily temperatures: {ex.Message}");
             }
         }
 

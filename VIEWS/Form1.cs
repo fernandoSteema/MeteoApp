@@ -18,10 +18,10 @@ namespace MeteoApp
     {
         #region PRIVATE FIELDS
         // Controllerss
-        private MeteoController metoController;
+        private WeatherController weatherController;
 
         // Weather Respones
-        private WeatherResponse temperaturaActual;
+        private WeatherResponse currentTemperature;
         private Forecast allTemperatures;
 
         // Lists
@@ -35,11 +35,11 @@ namespace MeteoApp
         Axis vertAxis, horizAxis;
 
         // Dictionaries
-        private Dictionary<DateTime, string> diasConFechas = new Dictionary<DateTime, string>();
-        private Dictionary<double, string> horasConFechas = new Dictionary<double, string>();
-        private Dictionary<string, List<string>> iconosPorDia = new Dictionary<string, List<string>>();
+        private Dictionary<DateTime, string> daysWithDates = new Dictionary<DateTime, string>();
+        private Dictionary<double, string> hoursWithDates = new Dictionary<double, string>();
+        private Dictionary<string, List<string>> iconsForDay = new Dictionary<string, List<string>>();
         private Dictionary<string, Bitmap> imageCache = new Dictionary<string, Bitmap>();
-        private Dictionary<string, Tuple<double, double>> rangoDias = new Dictionary<string, Tuple<double, double>>();
+        private Dictionary<string, Tuple<double, double>> rankDays = new Dictionary<string, Tuple<double, double>>();
 
         // Other  Variables
         private bool eventAdded = false;
@@ -47,15 +47,14 @@ namespace MeteoApp
         private double? lastBarX;
         public string currentCity;
         public bool btnDay = false;
-        Form2 form = new Form2();
         #endregion
 
 
         public Form1()
         {
             InitializeComponent();
-            metoController = new MeteoController();
-            temperaturaActual = new WeatherResponse();
+            weatherController = new WeatherController();
+            currentTemperature = new WeatherResponse();
             Update();
             Language.UpdateMenuStrip(menuStrip1);
             cmbBoxDays.Visible = false;
@@ -99,20 +98,19 @@ namespace MeteoApp
                 // Draw the vertical line
                 int pixelX = tChart1.Axes.Bottom.CalcXPosValue(verticalLineX);
 
-                // Convert the value of OADate to DateTime
                 DateTime dateFrom = DateTime.FromOADate(verticalLineX);
                 DateTime dateTo = dateFrom.AddDays(1);
 
-                // Get the name of the days from the dictionary "diasConFechas"
-                string day1 = diasConFechas.FirstOrDefault(d => d.Key.Date == dateFrom.Date).Value;
-                string day2 = diasConFechas.FirstOrDefault(d => d.Key.Date == dateTo.Date).Value;
+             
+                string day1 = daysWithDates.FirstOrDefault(d => d.Key.Date == dateFrom.Date).Value;
+                string day2 = daysWithDates.FirstOrDefault(d => d.Key.Date == dateTo.Date).Value;
 
                 day1 = day1?.Trim();
                 day2 = day2?.Trim();
 
                 if (day2 != null)
                 {
-                    // If the condition is met, then it translates the translation of its respective attribute+
+                   
                     day1 = Language.info.ContainsKey(day1) ? Language.info[day1] : day1;
                     day2 = Language.info.ContainsKey(day2) ? Language.info[day2] : day2;
                 }
@@ -125,7 +123,7 @@ namespace MeteoApp
                 annotationLeft.Shape.Transparent = true;
                 tChart1.Tools.Add(annotationLeft);
 
-                // Create second day annotation only if `day2` is not null
+              
                 if (day2 != null)
                 {
                     Annotation annotationRight = new Annotation(tChart1.Chart);
@@ -149,30 +147,30 @@ namespace MeteoApp
                 return;
             }
 
-            int selectedIndex = cmbBoxDays.SelectedIndex; // Guardar selección actual
+            int selectedIndex = cmbBoxDays.SelectedIndex; // Save current selection
             string selectedDay = (cmbBoxDays.SelectedItem != null) ? cmbBoxDays.SelectedItem.ToString() : "";
 
             cmbBoxDays.Items.Clear();
 
             for (int i = 0; i < 3; i++)
             {
-                DateTime fecha = DateTime.Parse(allTemperatures.forecastday[i].date);
-                string diaSemana = fecha.ToString("dddd");
+                DateTime date = DateTime.Parse(allTemperatures.forecastday[i].date);
+                string dayOfTheWeek = date.ToString("dddd");
 
-                // Traducir si existe en el diccionario de idiomas
-                if (Language.info.ContainsKey(diaSemana))
+                
+                if (Language.info.ContainsKey(dayOfTheWeek))
                 {
-                    diaSemana = Language.info[diaSemana];
+                    dayOfTheWeek = Language.info[dayOfTheWeek];
                 }
 
-                string diaFormateado = $"{diaSemana} ({fecha:dd/MM})";
-                string dateKey = fecha.ToString("yyyy-MM-dd");
+                string dayFormatted = $"{dayOfTheWeek} ({date:dd/MM})";
+                string dateKey = date.ToString("yyyy-MM-dd");
 
-                diasConFechas[fecha] = diaFormateado;
-                cmbBoxDays.Items.Add(diaFormateado);
+                daysWithDates[date] = dayFormatted;
+                cmbBoxDays.Items.Add(dayFormatted);
             }
 
-            // Restaurar la selección previa si sigue existiendo
+            // Restore previous selection if it still exists
             if (!string.IsNullOrEmpty(selectedDay) && cmbBoxDays.Items.Contains(selectedDay))
             {
                 cmbBoxDays.SelectedItem = selectedDay;
@@ -196,11 +194,11 @@ namespace MeteoApp
                 string headerTxt = Language.info.ContainsKey("Forecast_by_hour") ? Language.info["Forecast_by_hour"] : "Previsió per hores";
                 tChart1.Header.Text = headerTxt;
 
-                // Obtener traducciones
+                // Get translations
                 string evolutionText = Language.info.ContainsKey("EVOLUTION_OF_DAY") ? Language.info["EVOLUTION_OF_DAY"] : "EVOLUCIÓ DEL DIA";
                 string tempHumText = Language.info.ContainsKey("TEMP_HUMIDITY") ? Language.info["TEMP_HUMIDITY"] : "Temperatura / Humitat relativa";
 
-                // Actualizar encabezados del gráfico sin modificar los datos
+                // Update chart headers without modifying the data
                 tChart2.Header.Text = $"{evolutionText}: {allTemperatures.forecastday[0].date}";
                 tChart2.SubHeader.Text = tempHumText;
 
@@ -226,16 +224,16 @@ namespace MeteoApp
         ///  Gets the current temperature of the specified city and updates the UI elements.
         /// </summary>
         /// <param name="city">The city for which to get the temperature</param>
-        private async void GetTemperaturaActual(string city)
+        private async void GetCurrentTemperature(string city)
         {
-            temperaturaActual = await metoController.GetCurrentTemperatura(city);
+            currentTemperature = await weatherController.GetCurrentTemperatura(city);
 
-            if (temperaturaActual != null)
+            if (currentTemperature != null)
             {
-                lblTemp.Text = Math.Truncate(temperaturaActual.Current.temp_c).ToString() + "ºC";
-                lblCity.Text = temperaturaActual.Location.Name;
-                lblProvincia.Text = $"{temperaturaActual.Location.Region} region";
-                imgIcon.Load($"https:{temperaturaActual.Current.condition.Icon}");
+                lblTemp.Text = Math.Truncate(currentTemperature.Current.temp_c).ToString() + "ºC";
+                lblCity.Text = currentTemperature.Location.Name;
+                lblProvince.Text = $"{currentTemperature.Location.Region} region";
+                imgIcon.Load($"https:{currentTemperature.Current.condition.Icon}");
 
             }
         }
@@ -251,23 +249,28 @@ namespace MeteoApp
 
             Bar barSeries = (Bar)tChart1.Series[0];
             barSeries.Transparency = 85;
+
             tChart1.Panning.Allow = ScrollModes.None;
             hScrollBar1.Visible = true;
+            tChart1.Zoom.Allow = false;
+
             btnDay = false;
             currentCity = city;
 
             if (tChart1.Series.Count > 0)
             {
                 tChart1.Series[0].Clear();
-                iconosPorDia.Clear();
-                diasConFechas.Clear();
-                horasConFechas.Clear();
+                iconsForDay.Clear();
+                daysWithDates.Clear();
+                hoursWithDates.Clear();
             }
+
+            tChart1.Axes.Bottom.Labels.Separation = 50;
 
             string headerTxt = Language.info.ContainsKey("Forecast_by_hour") ? Language.info["Forecast_by_hour"] : "Previsió per hores";
             tChart1.Header.Text = headerTxt;
 
-            allTemperatures = await metoController.GetEvolutionOfWeatherByCity(city);
+            allTemperatures = await weatherController.GetEvolutionOfWeatherByCity(city);
 
             if (allTemperatures != null && allTemperatures.forecastday.Count > 0)
             {
@@ -276,11 +279,11 @@ namespace MeteoApp
                 lastBarX = null;
                 firstBarXNextDay = null;
 
-                foreach (var dia in allTemperatures.forecastday)
+                foreach (Forecastday dia in allTemperatures.forecastday)
                 {
-                    DateTime fecha = DateTime.Parse(dia.date);
-                    string dateKey = fecha.ToString("yyyy-MM-dd");
-                    diasConFechas[fecha] = fecha.ToString("dddd");
+                    DateTime date = DateTime.Parse(dia.date);
+                    string dateKey = date.ToString("yyyy-MM-dd");
+                    daysWithDates[date] = date.ToString("dddd");
 
                     List<string> tempIcons = new List<string>();
 
@@ -294,43 +297,42 @@ namespace MeteoApp
                         if (fechaHora < DateTime.Now)
                             continue;
 
-                        double horaValor = fechaHora.ToOADate();
-                        barSeries.Add(horaValor, hora.temp_c, fechaHora.ToString("HH:mm"));
-                        horasConFechas[horaValor] = dateKey;
+                        double hourValue = fechaHora.ToOADate();
+                        barSeries.Add(hourValue, hora.temp_c, fechaHora.ToString("HH:mm"));
+                        hoursWithDates[hourValue] = dateKey;
                         tempIcons.Add($"https:{hora.condition.Icon}");
 
-                        // Save the first X value of the day
+                       
                         if (firstBarX == null)
-                            firstBarX = horaValor;
+                            firstBarX = hourValue;
 
                         // Save the last bar of the current day
                         lastBarTime = fechaHora;
-                        lastBarX = horaValor;
+                        lastBarX = hourValue;
 
-                        rangoDias[dateKey] = new Tuple<double, double>(firstBarX ?? 0, lastBarX ?? 0);
+                        rankDays[dateKey] = new Tuple<double, double>(firstBarX ?? 0, lastBarX ?? 0);
                     }
 
                     if (tempIcons.Count > 0)
                     {
-                        iconosPorDia[dateKey] = tempIcons;
+                        iconsForDay[dateKey] = tempIcons;
                     }
 
-                    // Asignamos el primer valor del día siguiente al primer valor de X
+                    // We assign the first value of the next day to the first value of X
                     if (firstBarX != null)
                         firstBarXNextDay = firstBarX;
 
                     if (lastBarTime != null && firstBarXNextDay != null)
                     {
-                        DateTime date23 = fecha.AddHours(23);
-                        DateTime date00 = fecha.AddDays(1).AddHours(0);
+                        DateTime date23 = date.AddHours(23);
+                        DateTime date00 = date.AddDays(1).AddHours(0);
 
-                        // Usamos los valores de `ToOADate` para convertir las fechas a valores flotantes
                         double x23 = date23.ToOADate();
                         double x00 = date00.ToOADate();
 
-                        // Calculamos las posiciones medias
+                        // Calculate the average positions
                         double verticalLineX = (x23 + x00) / 2;
-                        verticalLinePositions.Add(verticalLineX); // Guardamos la posición de la línea
+                        verticalLinePositions.Add(verticalLineX); 
                     }
                 }
 
@@ -351,18 +353,33 @@ namespace MeteoApp
                 }
 
                 double visibleRange = (maxX - minX) / 20;
-
-                hScrollBar1.Minimum = 0;
-                hScrollBar1.Maximum = 990; // Provisional
-                hScrollBar1.Value = 0;
-                hScrollBar1.LargeChange = 10;
-
                 double initialMax = minX + visibleRange;
                 tChart1.Axes.Bottom.SetMinMax(minX, initialMax);
+
+                double minY = barSeries.MinYValue();
+                double maxY = barSeries.MaxYValue();
+
+                double margenY = (maxY - minY) * 0.15;
+                if (minY > 0 && minY < 5)
+                {
+                    minY = 0;
+                }
+                else minY = minY -margenY;
+
+                tChart1.Axes.Left.SetMinMax(minY, maxY + margenY);
+
+                if (minY < 0 && maxY > 0)
+                    tChart1.Axes.Left.Grid.Centered = true;
+
+                //hScrollBar1.Minimum = 0;
+                //hScrollBar1.Maximum = 990; // Provisional
+                //hScrollBar1.Value = 0;
+                //hScrollBar1.LargeChange = 10;
+
             }
             else
             {
-                MessageBox.Show("No se encontraron datos para mostrar en el gráfico.");
+                MessageBox.Show("No data found!");
             }
 
             tChart1.Refresh();
@@ -387,7 +404,7 @@ namespace MeteoApp
             if (tChart1.Series.Count == 0)
             {
                 barSeries.Transparency = 70;
-                barSeries.ColorEach = true;
+                barSeries.ColorEach = false;
                 tChart1.Series.Add(barSeries);
             }
 
@@ -396,10 +413,10 @@ namespace MeteoApp
             currentCity = city;
 
             barSeries.Clear();
-            iconosPorDia.Clear();
-            diasConFechas.Clear();
+            iconsForDay.Clear();
+            daysWithDates.Clear();
 
-            // Eliminar anotaciones previas
+            // Delete previous annotations (Only annotation type tools!)
             for (int i = tChart1.Tools.Count - 1; i >= 0; i--)
             {
                 if (tChart1.Tools[i] is Annotation)
@@ -408,45 +425,37 @@ namespace MeteoApp
                 }
             }
 
-            allTemperatures = await metoController.GetPrevisionBy10Days(city);
+            allTemperatures = await weatherController.GetPrevisionBy10Days(city);
 
             if (allTemperatures != null && allTemperatures.forecastday.Count > 0)
             {
-                // Traducir título del gráfico
                 tChart1.Header.Text = Language.info.ContainsKey("FORECAST_7_DAYS")
-                    ? Language.info["FORECAST_7_DAYS"]
-                    : "FORECAST (7 days)";
+                                    ? Language.info["FORECAST_7_DAYS"]
+                                    : "FORECAST (7 days)";
 
-                foreach (var dia in allTemperatures.forecastday)
+                foreach (Forecastday day in allTemperatures.forecastday)
                 {
-                    DateTime fecha = DateTime.Parse(dia.date);
-                    string diaSemana = fecha.ToString("dddd");
+                    DateTime date = DateTime.Parse(day.date);
+                    string dayOfTheWeek = date.ToString("dddd");
 
-                    // Traducir el nombre del día si existe en el diccionario de idiomas
-                    if (Language.info.ContainsKey(diaSemana))
+                   
+                    if (Language.info.ContainsKey(dayOfTheWeek))
                     {
-                        diaSemana = Language.info[diaSemana];
+                        dayOfTheWeek = Language.info[dayOfTheWeek];
                     }
 
-                    string dateKey = fecha.ToString("yyyy-MM-dd");
+                    string dateKey = date.ToString("yyyy-MM-dd");
 
-                    // Almacenar relación fecha-nombre del día
-                    diasConFechas[fecha] = diaSemana;
+                    daysWithDates[date] = dayOfTheWeek;
 
-                    // Agregar datos al gráfico
-                    barSeries.Add(dia.day.maxtemp_c, diaSemana);
+                    barSeries.Add(day.day.maxtemp_c, dayOfTheWeek);
 
-                    // Guardar icono del clima
-                    string urlIcon = $"https:{dia.day.condition.Icon}";
-                    iconosPorDia[dateKey] = new List<string> { urlIcon };
+                    string urlIcon = $"https:{day.day.condition.Icon}";
+                    iconsForDay[dateKey] = new List<string> { urlIcon };
                 }
-
-                // Configurar paginación para 10 días
-                tChart1.Page.MaxPointsPerPage = 10;
-                tChart1.Page.Current = 1;
             }
 
-            // Forzar actualización del gráfico
+            // Force chart update
             tChart1.Axes.Bottom.Automatic = true;
             tChart1.Invalidate();
         }
@@ -475,22 +484,47 @@ namespace MeteoApp
                 tChart2.Series[1].Clear();
             }
 
+            tChart2.Zoom.Allow = false;
+            tChart2.Panning.Allow = ScrollModes.None;
+            tChart2.Axes.Bottom.Labels.Separation = 90;
 
             lineTemperatura.VertAxis = VerticalAxis.Left;
             lineHumidity.VertAxis = VerticalAxis.Right;
 
 
-            allTemperatures = await metoController.GetEvolutionOfHumidityAndTemperatureByCity(city);
+            allTemperatures = await weatherController.GetEvolutionOfHumidityAndTemperatureByCity(city);
 
             foreach (Tool tool in tChart2.Tools)
             {
-                if (tool is NearestPoint)
+                if (tool is NearestPoint np)
                 {
-                    toolNPHumidity = (NearestPoint)tool;
-                    toolNPTemp = (NearestPoint)tool;
-                    break;
+                   if(np.Series == lineHumidity)
+                        toolNPHumidity = np;
+                   else if (np.Series == lineTemperatura)
+                        toolNPTemp = np;
                 }
             }
+
+            if (toolNPHumidity != null)
+            {
+                toolNPHumidity.Pen.Visible = true;
+                toolNPHumidity.Pen.Color = Color.Black;
+                toolNPHumidity.Pen.Width = 2;
+                toolNPHumidity.DrawLine = false;
+                toolNPHumidity.Pen.Style = Steema.TeeChart.Drawing.DashStyle.Solid;
+            }
+
+            if (toolNPTemp != null)
+            {
+                toolNPTemp.Pen.Visible = true;
+                toolNPTemp.Pen.Color = Color.Black;
+                toolNPTemp.Pen.Width = 2;
+                toolNPTemp.DrawLine = false;
+                toolNPTemp.Pen.Style = Steema.TeeChart.Drawing.DashStyle.Solid;
+            }
+
+
+
 
             annotation = new Annotation(tChart2.Chart);
             vertAxis = tChart2.Axes.Left;
@@ -511,8 +545,8 @@ namespace MeteoApp
 
                     foreach (var hora in dia.hour)
                     {
-                        DateTime fechaHora = DateTime.Parse(hora.time.ToString());
-                        if (fechaHora.Hour >= 0 && fechaHora.Hour <= 9 && (fechaHora.Minute == 0 || fechaHora.Minute == 30))
+                        DateTime dateTime = DateTime.Parse(hora.time.ToString());
+                        if (dateTime.Hour >= 0 && dateTime.Hour <= 9 && (dateTime.Minute == 0 || dateTime.Minute == 30))
                         {
                             lineTemperatura.Add(hora.time, hora.temp_c);
                             lineHumidity.Add(hora.time, hora.humidity);
@@ -547,7 +581,7 @@ namespace MeteoApp
         {
 
             string city = txtBoxCity.Text;
-            GetTemperaturaActual(city);
+            GetCurrentTemperature(city);
 
             // Suscribir el evento solo una vez para evitar múltiples dibujos
             if (!eventAdded)
@@ -573,9 +607,16 @@ namespace MeteoApp
         private void btnHours_Click(object sender, EventArgs e)
         {
             string city = txtBoxCity.Text;
-            GetTemperaturaActual(city);
+            if (!eventAdded)
+            {
+                tChart1.AfterDraw += TChart1_AfterDraw;
+                eventAdded = true;
+            }
+
+            GetCurrentTemperature(city);
             GetAllTemperatures(city);
             GetTemperatureAndHumidity(city);
+
         }
 
         private void englishToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -622,68 +663,73 @@ namespace MeteoApp
         ///  Draw the images on the graph for the temperatures per day, and also for the temperatures per hour.
         /// </summary>
         private void tChart1_AfterDraw(object sender, Steema.TeeChart.Drawing.IGraphics3D g)
-        {   
+        {
+            // Removes any previous clipping regions that may have been configured
             tChart1.Graphics3D.ClearClipRegions();
 
+            // Creates a rectangle that respects the horizontal boundaries of the chart (X and Width)
+            // but extends from the top of the screen (Y=0) to the bottom of the chart
             Rectangle openTopRect = new Rectangle(
-                                    tChart1.Chart.ChartRect.X, 
-                                    0, tChart1.Chart.ChartRect.Width, 
-                                    tChart1.Chart.ChartRect.Height + 
+                                    tChart1.Chart.ChartRect.X,
+                                    0, tChart1.Chart.ChartRect.Width,
+                                    tChart1.Chart.ChartRect.Height +
                                     tChart1.Chart.ChartRect.Y
             );
 
+            // Set this rectangle as the clipping region.
+            // Anything drawn outside this region will be clipped (not visible).
             tChart1.Graphics3D.ClipRectangle(openTopRect);
 
             foreach (Series s in tChart1.Series)
             {
                 if (!(s is Bar)) continue;
 
-                Dictionary<string, List<int>> datosAgrupados = new Dictionary<string, List<int>>();
+                Dictionary<string, List<int>> dataGroups = new Dictionary<string, List<int>>();
 
                 for (int i = 0; i < s.Count; i++)
                 {
                     string dateKey;
 
                     // Case 1: Data represents hours (GetAllTemperatures)
-                    if (horasConFechas.ContainsKey(s.XValues[i]))
+                    if (hoursWithDates.ContainsKey(s.XValues[i]))
                     {
-                        dateKey = horasConFechas[s.XValues[i]];
+                        dateKey = hoursWithDates[s.XValues[i]];
                     }
                     // Case 2: Data represents days (GetAllTemperaturesByDays)
-                    else if (diasConFechas.ContainsValue(s.Labels[i]))
+                    else if (daysWithDates.ContainsValue(s.Labels[i]))
                     {
-                        dateKey = diasConFechas.FirstOrDefault(x => x.Value == s.Labels[i]).Key.ToString("yyyy-MM-dd");
+                        dateKey = daysWithDates.FirstOrDefault(x => x.Value == s.Labels[i]).Key.ToString("yyyy-MM-dd");
                     }
                     else
                     {
                         continue;
                     }
 
-                    if (!datosAgrupados.ContainsKey(dateKey))
-                        datosAgrupados[dateKey] = new List<int>();
+                    if (!dataGroups.ContainsKey(dateKey))
+                        dataGroups[dateKey] = new List<int>();
 
-                    datosAgrupados[dateKey].Add(i);
+                    dataGroups[dateKey].Add(i);
                 }
 
-                foreach (var grupo in datosAgrupados)
+                foreach (var group in dataGroups)
                 {
                     int p = 0;
-                    string dateKey = grupo.Key;
+                    string dateKey = group.Key;
 
-                    if (!iconosPorDia.ContainsKey(dateKey) || iconosPorDia[dateKey].Count == 0)
+                    if (!iconsForDay.ContainsKey(dateKey) || iconsForDay[dateKey].Count == 0)
                         continue;
 
-                    foreach (int index in grupo.Value)
+                    foreach (int index in group.Value)
                     {
                         Bitmap objBitmap;
                         if (s.Labels[index].Contains(":"))
                         {
-                            int iconIndex = p % iconosPorDia[dateKey].Count;
-                            objBitmap = LoadBitmapFromUrl(iconosPorDia[dateKey][iconIndex]);
+                            int iconIndex = p % iconsForDay[dateKey].Count;
+                            objBitmap = LoadBitmapFromUrl(iconsForDay[dateKey][iconIndex]);
                         }
                         else
                         {
-                            objBitmap = LoadBitmapFromUrl(iconosPorDia[dateKey][0]);
+                            objBitmap = LoadBitmapFromUrl(iconsForDay[dateKey][0]);
                         }
 
                         Steema.TeeChart.Drawing.TImage tChartImage = new Steema.TeeChart.Drawing.TImage(objBitmap);
@@ -714,16 +760,28 @@ namespace MeteoApp
 
         private void ToolNPHumidity_Change(object? sender, EventArgs e)
         {
-            Line graficoLiniaTemperature = (Line)tChart2.Series[0];
-            Line graficoLiniaHumidity = (Line)tChart2.Series[1];
+            Line graphLineTemperature = (Line)tChart2.Series[0];
+            Line graphLineHumidity = (Line)tChart2.Series[1];
 
             string tempText = Language.info.ContainsKey("Temperature") ? Language.info["Temperature"] : "Temperature";
             string humText = Language.info.ContainsKey("Humidity") ? Language.info["Humidity"] : "Humidity";
 
-            annotation.Text = $"{tempText}: {graficoLiniaTemperature.YValues[toolNPTemp.Point]}ºC \n " +
-                              $" {humText}: {graficoLiniaHumidity.YValues[toolNPHumidity.Point]}%";
+            int tempPoint = toolNPTemp.Point;
+            int humPoint = toolNPHumidity.Point;
 
+            // Validar que los índices sean válidos antes de acceder
+            if (tempPoint >= 0 && tempPoint < graphLineTemperature.Count &&
+                humPoint >= 0 && humPoint < graphLineHumidity.Count)
+            {
+                annotation.Text = $"{tempText}: {graphLineTemperature.YValues[tempPoint]}ºC \n " +
+                                  $"{humText}: {graphLineHumidity.YValues[humPoint]}%";
+            }
+            else
+            {
+                annotation.Text = $"{tempText}: - \n {humText}: -";
+            }
         }
+
 
         private void TChart2_MouseMove(object? sender, MouseEventArgs e)
         {
@@ -737,6 +795,12 @@ namespace MeteoApp
             annotation.Active = toolNPHumidity.Active || toolNPTemp.Active;
         }
 
+        /// <summary>
+        /// Downloads an image from a given URL and returns it as a BitmapImage for use in WPF.
+        /// Utilizes a cache to avoid repeated downloads of the same image.
+        /// </summary>
+        /// <param name="url">The URL of the image to download.</param>
+        /// <returns>A BitmapImage loaded from the specified URL.</returns>
         private Bitmap LoadBitmapFromUrl(string url)
         {
             if (imageCache.ContainsKey(url))
@@ -768,24 +832,23 @@ namespace MeteoApp
         {
             if (s is Bar && valueIndex >= 0)
             {
-                string valor = bar1.Labels[valueIndex];
-                double horaValor = s.XValues[valueIndex];
+                string value = bar1.Labels[valueIndex];
+                double hourValue = s.XValues[valueIndex];
 
-                DateTime fechaHoraSeleccionada = DateTime.FromOADate(horaValor);
+                DateTime dateSelectedTime = DateTime.FromOADate(hourValue);
 
-                int horas = fechaHoraSeleccionada.Hour;
-                int minutos = fechaHoraSeleccionada.Minute;
+                int hours = dateSelectedTime.Hour;
+                int minutes = dateSelectedTime.Minute;
 
-                DateTime fechaSeleccionada = DateTime.Today.Date;
-                TimeSpan horaSeleccionada = new TimeSpan(horas, minutos, 0);
+                DateTime dateSelected = DateTime.Today.Date;
+                TimeSpan hourSelected = new TimeSpan(hours, minutes, 0);
 
                 string city = txtBoxCity.Text;
 
-                Form2 form = new Form2(allTemperatures, valor, fechaSeleccionada, horaSeleccionada, metoController, city, btnDay);
+                Form2 form = new Form2(allTemperatures, value, dateSelected, hourSelected, weatherController, city, btnDay);
                 form.Show();
 
-
-                _ = form.CargarDatos();
+                _ = form.LoadData();
             }
         }
 
@@ -808,14 +871,13 @@ namespace MeteoApp
             double newMin = minX + e.NewValue * (maxX - minX - visibleRange) / hScrollBar1.Maximum;
             double newMax = newMin + visibleRange;
 
-            // Prevent the range from going out of bounds
+            
             if (newMax > maxX)
             {
                 newMax = maxX;
                 newMin = newMax - visibleRange;
             }
 
-            // Avoid out-of-range values
             if (newMin < minX)
             {
                 newMin = minX;
@@ -826,7 +888,7 @@ namespace MeteoApp
             UpdateAnnotations();
 
             // PART OF THE CMBOX:
-            foreach (var kvp in rangoDias)
+            foreach (var kvp in rankDays)
             {
                 // Gets the minimum and maximum values for the selected day in the dictionary.
                 double minDay = kvp.Value.Item1;
@@ -834,10 +896,10 @@ namespace MeteoApp
 
                 if (newMin >= minDay && newMin <= maxDay)
                 {
-                    // Gets the formatted name of the corresponding day in ‘daysWithDates’.
-                    string formattedDay = diasConFechas[DateTime.Parse(kvp.Key)];
+                    
+                    string formattedDay = daysWithDates[DateTime.Parse(kvp.Key)];
 
-                    // Find the index of the day in the ComboBox.
+                  
                     int index = cmbBoxDays.Items.IndexOf(formattedDay);
 
                     if (index != -1 && cmbBoxDays.SelectedIndex != index)
@@ -861,17 +923,17 @@ namespace MeteoApp
             if (cmbBoxDays.SelectedItem == null) return;
 
             string selectedDay = cmbBoxDays.SelectedItem.ToString();
-            string fechaStr = selectedDay.Split('(')[1].Split(')')[0];
+            string dateStr = selectedDay.Split('(')[1].Split(')')[0];
 
 
-            if (DateTime.TryParseExact(fechaStr, "dd/MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
+            if (DateTime.TryParseExact(dateStr, "dd/MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
             {
                 string dateKey = parsedDate.ToString("yyyy-MM-dd");
 
-                if (rangoDias.ContainsKey(dateKey))
+                if (rankDays.ContainsKey(dateKey))
                 {
-                    double minX = rangoDias[dateKey].Item1;
-                    double maxX = rangoDias[dateKey].Item2;
+                    double minX = rankDays[dateKey].Item1;
+                    double maxX = rankDays[dateKey].Item2;
 
                     tChart1.Axes.Bottom.SetMinMax(minX, maxX);
 
@@ -887,14 +949,14 @@ namespace MeteoApp
                         hScrollBar1.Value = sliderValue;
                     }
 
-                    // FORZAR REDIBUJADO Y ACTUALIZAR ANOTACIONES
+                    // FORCE REDRAW AND UPDATE ANNOTATIONS
                     tChart1.Refresh();
                     UpdateAnnotations();
                 }
             }
             else
             {
-                MessageBox.Show("Error al convertir la fecha seleccionada.");
+                MessageBox.Show("No data found!");
             }
         }
 
@@ -905,13 +967,27 @@ namespace MeteoApp
                 int visibleBars = tChart1.Series[0].LastVisibleIndex - tChart1.Series[0].FirstVisibleIndex + 1;
 
                 if (visibleBars > 20)
-                    ((Bar)(tChart1.Series[0])).CustomBarWidth = 33;  
+                    ((Bar)(tChart1.Series[0])).CustomBarWidth = 33;
                 else if (visibleBars > 10)
-                    ((Bar)(tChart1.Series[0])).CustomBarWidth = 44; 
+                    ((Bar)(tChart1.Series[0])).CustomBarWidth = 44;
                 else
-                    ((Bar)(tChart1.Series[0])).CustomBarWidth = 50;  
+                    ((Bar)(tChart1.Series[0])).CustomBarWidth = 50;
             }
         }
 
+        private void languageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panelBottomTop_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void tChart2_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

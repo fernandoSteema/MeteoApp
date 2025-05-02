@@ -28,17 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            Steema.TeeChart.Margins margins3 = new Steema.TeeChart.Margins();
-            Steema.TeeChart.Drawing.Cursor cursor3 = new Steema.TeeChart.Drawing.Cursor();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             Steema.TeeChart.Margins margins1 = new Steema.TeeChart.Margins();
             Steema.TeeChart.Drawing.Cursor cursor1 = new Steema.TeeChart.Drawing.Cursor();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            Steema.TeeChart.Margins margins2 = new Steema.TeeChart.Margins();
+            Steema.TeeChart.Drawing.Cursor cursor2 = new Steema.TeeChart.Drawing.Cursor();
             btnSearch = new Steema.TeeChart.ButtonPen();
             lblSearch = new Label();
             txtBoxCity = new TextBox();
             lblSearch2 = new Label();
             lblCity = new Label();
-            lblProvincia = new Label();
+            lblProvince = new Label();
             lblTemp = new Label();
             imgIcon = new PictureBox();
             lblMinMax = new Label();
@@ -66,11 +66,19 @@
             englishToolStripMenuItem1 = new ToolStripMenuItem();
             catalanToolStripMenuItem1 = new ToolStripMenuItem();
             spanishToolStripMenuItem1 = new ToolStripMenuItem();
+            panelTop = new Panel();
+            panelBottom = new Panel();
+            panelBottomBottom = new Panel();
+            panelBottomTop = new Panel();
             ((System.ComponentModel.ISupportInitialize)imgIcon).BeginInit();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
             menuStrip1.SuspendLayout();
+            panelTop.SuspendLayout();
+            panelBottom.SuspendLayout();
+            panelBottomBottom.SuspendLayout();
+            panelBottomTop.SuspendLayout();
             SuspendLayout();
             // 
             // btnSearch
@@ -87,9 +95,9 @@
             // lblSearch
             // 
             lblSearch.Font = new Font("Segoe UI", 12F);
-            lblSearch.Location = new Point(534, 33);
+            lblSearch.Location = new Point(527, 33);
             lblSearch.Name = "lblSearch";
-            lblSearch.Size = new Size(155, 31);
+            lblSearch.Size = new Size(125, 31);
             lblSearch.TabIndex = 1;
             lblSearch.Text = "The weather in...";
             // 
@@ -121,12 +129,12 @@
             // 
             // lblProvincia
             // 
-            lblProvincia.Font = new Font("Segoe UI", 9F);
-            lblProvincia.Location = new Point(680, 146);
-            lblProvincia.Name = "lblProvincia";
-            lblProvincia.Size = new Size(152, 25);
-            lblProvincia.TabIndex = 5;
-            lblProvincia.Text = "Girona province";
+            lblProvince.Font = new Font("Segoe UI", 9F);
+            lblProvince.Location = new Point(680, 146);
+            lblProvince.Name = "lblProvincia";
+            lblProvince.Size = new Size(152, 25);
+            lblProvince.TabIndex = 5;
+            lblProvince.Text = "Girona province";
             // 
             // lblTemp
             // 
@@ -137,6 +145,7 @@
             lblTemp.Size = new Size(111, 72);
             lblTemp.TabIndex = 6;
             lblTemp.Text = "12º";
+            lblTemp.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // imgIcon
             // 
@@ -154,15 +163,17 @@
             lblMinMax.Size = new Size(93, 15);
             lblMinMax.TabIndex = 10;
             lblMinMax.Text = "Máx. 15º Mín.5º ";
+            lblMinMax.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // tabControl1
             // 
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
-            tabControl1.Location = new Point(194, 302);
+            tabControl1.Dock = DockStyle.Fill;
+            tabControl1.Location = new Point(100, 10);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1157, 428);
+            tabControl1.Size = new Size(1301, 449);
             tabControl1.TabIndex = 11;
             // 
             // tabPage1
@@ -173,7 +184,7 @@
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(1149, 400);
+            tabPage1.Size = new Size(1293, 421);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "tabPage1";
             tabPage1.UseVisualStyleBackColor = true;
@@ -189,9 +200,10 @@
             // 
             // hScrollBar1
             // 
-            hScrollBar1.Location = new Point(-8, 385);
+            hScrollBar1.Dock = DockStyle.Bottom;
+            hScrollBar1.Location = new Point(3, 401);
             hScrollBar1.Name = "hScrollBar1";
-            hScrollBar1.Size = new Size(1157, 17);
+            hScrollBar1.Size = new Size(1287, 17);
             hScrollBar1.TabIndex = 14;
             hScrollBar1.Scroll += hScrollBar1_Scroll;
             // 
@@ -836,6 +848,7 @@
             tChart1.Axes.Top.Title.Shadow.Brush.Color = Color.DarkGray;
             tChart1.Axes.Top.Title.Shadow.Brush.Solid = true;
             tChart1.Axes.Top.Title.Shadow.Brush.Visible = true;
+            tChart1.Dock = DockStyle.Fill;
             // 
             // 
             // 
@@ -1047,7 +1060,7 @@
             tChart1.Legend.Title.Shadow.Brush.Solid = true;
             tChart1.Legend.Title.Shadow.Brush.Visible = true;
             tChart1.Legend.Visible = false;
-            tChart1.Location = new Point(-4, 0);
+            tChart1.Location = new Point(3, 3);
             tChart1.Name = "tChart1";
             // 
             // 
@@ -1086,13 +1099,13 @@
             // 
             // 
             // 
-            margins3.Bottom = 100;
-            margins3.Left = 100;
-            margins3.Right = 100;
-            margins3.Top = 100;
-            tChart1.Printer.Margins = margins3;
+            margins1.Bottom = 100;
+            margins1.Left = 100;
+            margins1.Right = 100;
+            margins1.Top = 100;
+            tChart1.Printer.Margins = margins1;
             tChart1.Series.Add(bar1);
-            tChart1.Size = new Size(1157, 402);
+            tChart1.Size = new Size(1287, 415);
             // 
             // 
             // 
@@ -1203,6 +1216,10 @@
             // 
             // 
             tChart1.Walls.Back.Brush.Color = Color.Silver;
+            // 
+            // 
+            // 
+            tChart1.Walls.Back.Brush.Gradient.Visible = false;
             tChart1.Walls.Back.Brush.Solid = true;
             tChart1.Walls.Back.Brush.Visible = false;
             // 
@@ -1317,7 +1334,6 @@
             tChart1.AfterDraw += tChart1_AfterDraw;
             tChart1.BeforeDrawSeries += tChart1_BeforeDrawSeries_1;
             tChart1.ClickSeries += tChart1_ClickSeries;
-       
             // 
             // bar1
             // 
@@ -1333,7 +1349,7 @@
             bar1.Brush.Solid = true;
             bar1.Brush.Visible = true;
             bar1.Color = Color.FromArgb(38, 119, 153, 214);
-            bar1.Cursor = cursor3;
+            bar1.Cursor = cursor1;
             // 
             // 
             // 
@@ -1609,12 +1625,12 @@
             bar1.YValues.DataMember = "Bar";
             bar1.YValues.Value = new double[]
     {
-    821D,
-    813D,
-    882D,
-    905D,
-    998D,
-    1017D,
+    1056D,
+    1042D,
+    1082D,
+    1197D,
+    1120D,
+    1185D,
     0D,
     0D,
     0D,
@@ -1718,7 +1734,7 @@
             tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1149, 400);
+            tabPage2.Size = new Size(1293, 421);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "tabPage2";
             tabPage2.UseVisualStyleBackColor = true;
@@ -2340,6 +2356,7 @@
             tChart2.Axes.Top.Title.Shadow.Brush.Color = Color.DarkGray;
             tChart2.Axes.Top.Title.Shadow.Brush.Solid = true;
             tChart2.Axes.Top.Title.Shadow.Brush.Visible = true;
+            tChart2.Dock = DockStyle.Fill;
             // 
             // 
             // 
@@ -2583,14 +2600,14 @@
             // 
             // 
             // 
-            margins1.Bottom = 100;
-            margins1.Left = 100;
-            margins1.Right = 100;
-            margins1.Top = 100;
-            tChart2.Printer.Margins = margins1;
+            margins2.Bottom = 100;
+            margins2.Left = 100;
+            margins2.Right = 100;
+            margins2.Top = 100;
+            tChart2.Printer.Margins = margins2;
             tChart2.Series.Add(line2);
             tChart2.Series.Add(line1);
-            tChart2.Size = new Size(1146, 395);
+            tChart2.Size = new Size(1287, 415);
             // 
             // 
             // 
@@ -2813,6 +2830,7 @@
             tChart2.Zoom.Brush.Color = Color.FromArgb(150, 173, 216, 230);
             tChart2.Zoom.Brush.Solid = true;
             tChart2.Zoom.Brush.Visible = true;
+            tChart2.Click += tChart2_Click;
             // 
             // line2
             // 
@@ -2829,7 +2847,7 @@
             line2.Brush.Solid = true;
             line2.Brush.Visible = true;
             line2.Color = Color.FromArgb(255, 207, 104);
-            line2.Cursor = cursor1;
+            line2.Cursor = cursor2;
             // 
             // 
             // 
@@ -3086,31 +3104,31 @@
             line2.YValues.DataMember = "Y";
             line2.YValues.Value = new double[]
     {
-    967D,
-    898D,
-    945D,
-    894D,
-    928D,
-    949D,
-    998D,
-    935D,
-    948D,
-    986D,
-    1014D,
-    952D,
-    964D,
-    1017D,
-    960D,
-    957D,
-    1048D,
-    1042D,
-    957D,
-    950D,
-    914D,
-    865D,
-    906D,
-    806D,
-    687D,
+    652D,
+    647D,
+    547D,
+    652D,
+    569D,
+    675D,
+    753D,
+    738D,
+    668D,
+    624D,
+    530D,
+    509D,
+    438D,
+    511D,
+    581D,
+    521D,
+    607D,
+    489D,
+    591D,
+    481D,
+    408D,
+    521D,
+    597D,
+    488D,
+    515D,
     0D,
     0D,
     0D,
@@ -3204,7 +3222,7 @@
             line1.Brush.Solid = true;
             line1.Brush.Visible = true;
             line1.Color = Color.FromArgb(119, 153, 214);
-            line1.Cursor = cursor1;
+            line1.Cursor = cursor2;
             // 
             // 
             // 
@@ -3460,31 +3478,31 @@
             line1.YValues.DataMember = "Y";
             line1.YValues.Value = new double[]
     {
-    1043D,
-    1086D,
-    1078D,
-    1049D,
-    1053D,
-    1014D,
-    1033D,
-    1073D,
-    1078D,
-    1108D,
-    1096D,
-    1134D,
-    1148D,
-    1193D,
-    1210D,
-    1195D,
-    1186D,
-    1151D,
-    1144D,
-    1184D,
-    1183D,
-    1194D,
-    1190D,
-    1195D,
-    1206D,
+    468D,
+    472D,
+    441D,
+    462D,
+    434D,
+    420D,
+    387D,
+    410D,
+    402D,
+    370D,
+    354D,
+    397D,
+    427D,
+    390D,
+    391D,
+    396D,
+    381D,
+    358D,
+    320D,
+    319D,
+    306D,
+    346D,
+    381D,
+    380D,
+    351D,
     0D,
     0D,
     0D,
@@ -3571,6 +3589,7 @@
             nearestPoint1.Brush.Color = Color.FromArgb(247, 189, 125);
             nearestPoint1.Brush.Solid = true;
             nearestPoint1.Brush.Visible = true;
+            nearestPoint1.Direction = Steema.TeeChart.Tools.NearestPointDirection.Horizontal;
             // 
             // 
             // 
@@ -3578,7 +3597,7 @@
             nearestPoint1.Pen.Width = 2;
             nearestPoint1.Series = line2;
             nearestPoint1.SeriesIndex = 0;
-            nearestPoint1.Size = 10;
+            nearestPoint1.Size = 6;
             // 
             // nearestPoint2
             // 
@@ -3588,6 +3607,7 @@
             nearestPoint2.Brush.Color = Color.FromArgb(112, 135, 245);
             nearestPoint2.Brush.Solid = true;
             nearestPoint2.Brush.Visible = true;
+            nearestPoint2.Direction = Steema.TeeChart.Tools.NearestPointDirection.Horizontal;
             // 
             // 
             // 
@@ -3595,12 +3615,12 @@
             nearestPoint2.Pen.Width = 2;
             nearestPoint2.Series = line1;
             nearestPoint2.SeriesIndex = 1;
-            nearestPoint2.Size = 10;
+            nearestPoint2.Size = 6;
             nearestPoint2.Style = Steema.TeeChart.Tools.NearestPointStyles.Rectangle;
             // 
             // btnDays
             // 
-            btnDays.Location = new Point(195, 258);
+            btnDays.Location = new Point(189, 3);
             btnDays.Name = "btnDays";
             btnDays.Size = new Size(75, 36);
             btnDays.TabIndex = 13;
@@ -3610,7 +3630,7 @@
             // 
             // btnHours
             // 
-            btnHours.Location = new Point(276, 258);
+            btnHours.Location = new Point(270, 3);
             btnHours.Name = "btnHours";
             btnHours.Size = new Size(75, 36);
             btnHours.TabIndex = 14;
@@ -3690,25 +3710,65 @@
             spanishToolStripMenuItem1.Text = "Spanish";
             spanishToolStripMenuItem1.Click += spanishToolStripMenuItem1_Click;
             // 
+            // panelTop
+            // 
+            panelTop.Controls.Add(lblSearch);
+            panelTop.Controls.Add(txtBoxCity);
+            panelTop.Controls.Add(btnSearch);
+            panelTop.Controls.Add(listBox1);
+            panelTop.Controls.Add(lblSearch2);
+            panelTop.Controls.Add(lblCity);
+            panelTop.Controls.Add(lblProvince);
+            panelTop.Controls.Add(lblTemp);
+            panelTop.Controls.Add(imgIcon);
+            panelTop.Controls.Add(lblMinMax);
+            panelTop.Dock = DockStyle.Top;
+            panelTop.Location = new Point(0, 24);
+            panelTop.MinimumSize = new Size(0, 150);
+            panelTop.Name = "panelTop";
+            panelTop.Size = new Size(1501, 263);
+            panelTop.TabIndex = 18;
+            // 
+            // panelBottom
+            // 
+            panelBottom.Controls.Add(panelBottomBottom);
+            panelBottom.Controls.Add(panelBottomTop);
+            panelBottom.Dock = DockStyle.Fill;
+            panelBottom.Location = new Point(0, 287);
+            panelBottom.Name = "panelBottom";
+            panelBottom.Size = new Size(1501, 515);
+            panelBottom.TabIndex = 19;
+            // 
+            // panelBottomBottom
+            // 
+            panelBottomBottom.Controls.Add(tabControl1);
+            panelBottomBottom.Dock = DockStyle.Fill;
+            panelBottomBottom.Location = new Point(0, 46);
+            panelBottomBottom.Name = "panelBottomBottom";
+            panelBottomBottom.Padding = new Padding(100, 10, 100, 10);
+            panelBottomBottom.Size = new Size(1501, 469);
+            panelBottomBottom.TabIndex = 1;
+            // 
+            // panelBottomTop
+            // 
+            panelBottomTop.Controls.Add(btnDays);
+            panelBottomTop.Controls.Add(btnHours);
+            panelBottomTop.Dock = DockStyle.Top;
+            panelBottomTop.Location = new Point(0, 0);
+            panelBottomTop.MinimumSize = new Size(0, 40);
+            panelBottomTop.Name = "panelBottomTop";
+            panelBottomTop.Size = new Size(1501, 46);
+            panelBottomTop.TabIndex = 0;
+            panelBottomTop.Paint += panelBottomTop_Paint;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ButtonHighlight;
-            ClientSize = new Size(1501, 796);
-            Controls.Add(listBox1);
-            Controls.Add(btnHours);
-            Controls.Add(btnDays);
-            Controls.Add(tabControl1);
-            Controls.Add(lblMinMax);
-            Controls.Add(imgIcon);
-            Controls.Add(lblTemp);
-            Controls.Add(lblProvincia);
-            Controls.Add(lblCity);
-            Controls.Add(lblSearch2);
-            Controls.Add(txtBoxCity);
-            Controls.Add(lblSearch);
-            Controls.Add(btnSearch);
+            ClientSize = new Size(1501, 802);
+            Controls.Add(panelBottom);
+            Controls.Add(panelTop);
             Controls.Add(menuStrip1);
             Name = "Form1";
             Text = "METEO APP";
@@ -3719,6 +3779,11 @@
             tabPage2.ResumeLayout(false);
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
+            panelTop.ResumeLayout(false);
+            panelTop.PerformLayout();
+            panelBottom.ResumeLayout(false);
+            panelBottomBottom.ResumeLayout(false);
+            panelBottomTop.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -3730,7 +3795,7 @@
         private TextBox txtBoxCity;
         private Label lblSearch2;
         private Label lblCity;
-        private Label lblProvincia;
+        private Label lblProvince;
         private Label lblTemp;
         private PictureBox imgIcon;
         private Label lblMinMax;
@@ -3758,5 +3823,9 @@
         private ToolStripMenuItem catalanToolStripMenuItem1;
         private ToolStripMenuItem spanishToolStripMenuItem1;
         private ComboBox cmbBoxDays;
+        private Panel panelTop;
+        private Panel panelBottom;
+        private Panel panelBottomBottom;
+        private Panel panelBottomTop;
     }
 }
