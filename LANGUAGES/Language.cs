@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MeteoApp.VIEWS;
 
 namespace MeteoApp.LANGUAGES
 {
@@ -34,12 +33,22 @@ namespace MeteoApp.LANGUAGES
 
             if (Application.OpenForms["Form1"] is Form1 form1)
             {
-                //form1.UpdateChartLanguage();
+                form1.UpdateChartLanguage();
+
                 form1.btnDays.Text = Language.info.ContainsKey("btnDays") ? Language.info["btnDays"] : "Days";
                 form1.btnHours.Text = Language.info.ContainsKey("btnHours") ? Language.info["btnHours"] : "Hours";
+                form1.txtRecentCities.Text = Language.info.ContainsKey("txtRecentCities") ? Language.info["txtRecentCities"] : "📍Recent Cities";
+                form1.txtInformation.Text = Language.info.ContainsKey("txtInformation") ? Language.info["txtInformation"] : "ℹ️ Information";
+                form1.txtBlockInformation.Text = Language.info.ContainsKey("txtBlockInformation") ? Language.info["txtBlockInformation"] : "Type the name of a city to get its weather forecast.\r\nYou can change the language from the top menu.\r\nSee recent cities in the side list.";
+                form1.tabTemperature.Text = Language.info.ContainsKey("tabTemperature") ? Language.info["tabTemperature"] : "Temperature";
+                form1.tabTemperatureAndHumidity.Text = Language.info.ContainsKey("tabTemperatureAndHumidity") ? Language.info["tabTemperatureAndHumidity"] : "Temperature/Humidity";
+               
+
                 form1.UpdateAnnotations();
-                // Aquí actualizamos solo los nombres de los días sin recargar el gráfico
+               
                 form1.UpdateAndLoadForecastDays();
+                form1.ConfigureAxes();
+
 
                 if (form1.btnDay)
                 {
@@ -53,13 +62,13 @@ namespace MeteoApp.LANGUAGES
         {
             if (form == null)
             {
-                MessageBox.Show("ERROR: El formulario es nulo.");
+                MessageBox.Show("ERROR: The form is null.");
                 return;
             }
 
             if (info == null || info.Count == 0)
             {
-                MessageBox.Show("ERROR: La colección 'info' está vacía o no inicializada.");
+                MessageBox.Show("ERROR: The ‘info’ collection is empty or uninitialised.");
                 return;
             }
 

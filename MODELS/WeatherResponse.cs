@@ -24,6 +24,10 @@ namespace MeteoApp.MODELS
         public int Localtime_epoch { get; set; }
         public DateTime Localtime { get; set; }
 
+        public string FullLocation => $"{Name},{Region}, {Country}";
+        public string DisplayName => $"{Name}, {Region}, {Country}";
+        public string SearchQuery => $"{Lat},{Lon}";
+
     }
 
     public class Current
